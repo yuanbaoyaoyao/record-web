@@ -1,19 +1,48 @@
 <template>
     <div class="header">
         <div class="header-left">
-            <el-button :icon="Avatar" type="text">用户名</el-button>
+            <router-link to="cart">
+                <div class="header-icon">
+                    <el-icon>
+                        <Avatar />
+                    </el-icon>
+                </div>
+                <span>用户名</span>
+            </router-link>
         </div>
         <div class="header-right">
-            <el-button :icon="ShoppingCart" type="text">购物车</el-button>
-            <el-button :icon="FolderOpened" type="text">收藏夹</el-button>
-            <el-button :icon="ChatDotSquare" type="text">反馈</el-button>
+            <router-link to="cart">
+                <div class="header-icon">
+                    <el-icon>
+                        <ShoppingCart />
+                    </el-icon>
+                </div>
+                <span>购物车</span>
+            </router-link>
+            <router-link to="collects">
+                <div class="header-icon">
+                    <el-icon>
+                        <FolderOpened />
+                    </el-icon>
+                </div>
+                <span>收藏夹</span>
+            </router-link>
+            <hr />
+            <router-link to="feedback">
+                <div class="header-icon">
+                    <el-icon>
+                        <ChatDotSquare />
+                    </el-icon>
+                </div>
+                <span>反馈</span>
+            </router-link>
         </div>
     </div>
 </template>
 <script setup>
 import { Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus/icons-vue';
 </script>
-<style>
+<style scoped>
 .header {
     position: absolute;
     box-sizing: border-box;
@@ -25,18 +54,21 @@ import { Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus
     background: #f5f5f5;
 }
 .header,
-.header-right {
+.header-right,
+.header-left {
     display: flex;
     justify-content: space-between;
 }
-.el-button--text{
+a {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    text-decoration: none;
     font-size: 15px !important;
     color: #6c6c6c !important;
+    margin: 10px;
 }
-.header-right>.el-button--text{
-    margin-right: 15px;
-}
-.header-left>.el-button--text{
-    margin-left: 15px;
+.header-icon{
+    margin-top: 2px;
 }
 </style>
