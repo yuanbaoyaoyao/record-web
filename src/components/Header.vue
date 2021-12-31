@@ -1,6 +1,14 @@
 <template>
     <div class="header">
         <div class="header-left">
+            <router-link to="/">
+                <div class="header-icon">
+                    <el-icon>
+                        <HomeFilled />
+                    </el-icon>
+                </div>
+                <span>耗材管理系统</span>
+            </router-link>
             <router-link to="cart">
                 <div class="header-icon">
                     <el-icon>
@@ -40,13 +48,14 @@
     </div>
 </template>
 <script setup>
-import { Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus/icons-vue';
+import { HomeFilled, Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus/icons-vue';
 </script>
 <style scoped>
 .header {
     position: absolute;
     box-sizing: border-box;
-    width: 100%;
+    /* width: 100%; */
+    width: 1190px;
     height: 38px;
     top: 0px;
     left: 0px;
@@ -59,6 +68,9 @@ import { Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus
     display: flex;
     justify-content: space-between;
 }
+.header{
+    margin: auto;
+}
 a {
     display: grid;
     grid-template-columns: auto auto;
@@ -68,7 +80,7 @@ a {
     color: #6c6c6c !important;
     margin: 10px;
 }
-.header-icon{
+.header-icon {
     margin-top: 2px;
 }
 </style>

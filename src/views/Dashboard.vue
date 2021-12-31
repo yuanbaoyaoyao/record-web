@@ -8,7 +8,7 @@
             </div>
             <div>
                 <div class="dashboard-search-top">
-                    <div>
+                    <div class="search-input">
                         <el-input
                             v-model="input"
                             placeholder="Please input"
@@ -16,7 +16,7 @@
                             clearable
                         />
                     </div>
-                    <div>
+                    <div class="search-button">
                         <el-button type="primary">Search</el-button>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="dashboard-content-center">
-                <el-carousel indicator-position="outside">
+                <el-carousel>
                     <el-carousel-item v-for="item in 4" :key="item">
                         <h3>{{ item }}</h3>
                     </el-carousel-item>
@@ -141,54 +141,61 @@ const listData = [
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
     {
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
     {
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
     {
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
     {
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
     {
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
     {
         icon: "fas fa-cubes",
         name: "88a",
         linkname: "http://www.baidu.com",
-        event: "need a ",
+        event: "28a ",
         linkevent: "www.baidu.com"
     },
 ]
 </script>
-<style>
+<style scoped>
+span,
+a {
+    color: #727272;
+}
+a {
+    text-decoration: none;
+}
 ul {
     list-style: none;
     padding: 0px;
@@ -205,18 +212,30 @@ img {
 .dashboard {
     display: flex;
     flex-direction: column;
+    width: 1190px !important;
+    margin: auto;
 }
 .dashboard-header {
     display: grid;
-    grid-template-columns: 20% 40% auto;
+    grid-template-columns: 20% 55% auto;
     justify-items: center;
     margin: 25px;
 }
 .dashboard-search-top {
-    display: grid;
-    grid-template-columns: 70% auto;
-    justify-content: center;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
     margin-top: 10px;
+}
+.search-input {
+    width: 600px;
+    border-radius: 15px;
+}
+.search-input :deep() .el-input__inner {
+    height: 50px;
+}
+.search-button > .el-button {
+    height: 50px;
 }
 .dashboard-search-down {
     display: flex;
@@ -234,6 +253,10 @@ img {
 .dashboard-content-right,
 .dashboard-content-center {
     margin: 20px;
+    border-radius: 15px;
+}
+.el-carousel--horizontal {
+    border-radius: 15px;
 }
 .dashboard-consumables-list-detail {
     display: grid;
@@ -278,8 +301,9 @@ img {
 }
 .notice-title {
     margin-right: 10px;
-    font-family: tahoma, arial, "Hiragino Sans GB", 宋体, sans-serif;
+    font-family: tahoma, arial, "Hiragino Sans GB", 宋体, sans-serif !important;
     font-size: large;
+    color: black;
 }
 .el-carousel__item h3 {
     color: #475669;

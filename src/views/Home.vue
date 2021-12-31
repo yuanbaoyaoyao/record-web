@@ -4,7 +4,7 @@
             <v-header />
         </div>
         <div class="layout-center">
-            <v-sidebar />
+            <!-- <v-sidebar /> -->
             <div class="content">
                 <router-view v-slot="{ Component }">
                     <transition name="move" mode="out-in">
@@ -22,10 +22,6 @@ import vSidebar from "../components/Sidebar.vue"
 import vHeader from "../components/Header.vue"
 </script>
 <style>
-.layout {
-    display: flex !important;
-    flex-direction: column !important;
-}
 .content {
     position: absolute;
     box-sizing: border-box;
