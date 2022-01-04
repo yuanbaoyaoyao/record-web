@@ -39,4 +39,8 @@ import vAccountSidebar from '../components/AccountSidebar.vue';
     justify-content: flex-start;
     margin: 25px;
 }
+.setting-center {
+    display: flex;
+    background-color: white;
+}
 </style>
