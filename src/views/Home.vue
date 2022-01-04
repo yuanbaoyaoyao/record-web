@@ -7,11 +7,11 @@
             <!-- <v-sidebar /> -->
             <div class="content">
                 <router-view v-slot="{ Component }">
-                    <transition name="move" mode="out-in">
-                        <keep-alive>
+                    <keep-alive>
+                        <div>
                             <component :is="Component" />
-                        </keep-alive>
-                    </transition>
+                        </div>
+                    </keep-alive>
                 </router-view>
             </div>
         </div>

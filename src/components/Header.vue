@@ -9,13 +9,13 @@
                 </div>
                 <span>耗材管理系统</span>
             </router-link>
-            <router-link to="cart">
+            <router-link to="accountSetting">
                 <div class="header-icon">
                     <el-icon>
                         <Avatar />
                     </el-icon>
                 </div>
-                <span>用户名</span>
+                <span>元宝</span>
             </router-link>
         </div>
         <div class="header-right">
@@ -68,7 +68,7 @@ import { HomeFilled, Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@
     display: flex;
     justify-content: space-between;
 }
-.header{
+.header {
     margin: auto;
 }
 a {

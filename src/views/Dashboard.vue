@@ -221,6 +221,9 @@ img {
     justify-items: center;
     margin: 25px;
 }
+.dashboard-logo {
+    margin-right: 40px;
+}
 .dashboard-search-top {
     display: flex;
     justify-content: flex-start;
@@ -228,7 +231,7 @@ img {
     margin-top: 10px;
 }
 .search-input {
-    width: 600px;
+    width: 535px;
     border-radius: 15px;
 }
 .search-input :deep() .el-input__inner {
@@ -295,9 +298,6 @@ img {
     justify-items: center;
     align-items: center;
     font-size: x-large;
-}
-.button-text {
-    font-size: large;
 }
 .notice-title {
     margin-right: 10px;
