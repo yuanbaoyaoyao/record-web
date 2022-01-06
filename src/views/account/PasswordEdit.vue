@@ -1,3 +1,3 @@
 <template>
-    orders
+    passwordEdit
 </template>

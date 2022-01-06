@@ -1,3 +1,3 @@
 <template>
-    feedback
+    Notify
 </template>

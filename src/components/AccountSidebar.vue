@@ -1,30 +1,30 @@
 <template>
-    <div  class="sidebar-layout">
+    <div class="sidebar-layout">
         <el-row>
             <el-col>
-                <el-menu default-active="1" router>
+                <el-menu :default-active="onRoutes" router>
                     <div>
                         <span class="sidebar-title">个人中心</span>
                     </div>
-                    <el-menu-item index="1" route="/userInfo">
+                    <el-menu-item index="/notify" route="/notify">
                         <el-icon>
-                            <user />
+                            <bell />
                         </el-icon>
-                        <span>个人信息</span>
+                        <span>消息通知</span>
                     </el-menu-item>
-                    <el-menu-item index="2" route="/deliveryAddress">
+                    <el-menu-item index="/deliveryAddress" route="/deliveryAddress">
                         <el-icon>
                             <house />
                         </el-icon>
                         <span>收货地址</span>
                     </el-menu-item>
-                    <el-menu-item index="3" route="/collects">
+                    <el-menu-item index="/collects" route="/collects">
                         <el-icon>
                             <collection />
                         </el-icon>
                         <span>我的收藏</span>
                     </el-menu-item>
-                    <el-menu-item index="4" route="/feedback">
+                    <el-menu-item index="/feedback" route="/feedback">
                         <el-icon>
                             <warning />
                         </el-icon>
@@ -32,23 +32,39 @@
                     </el-menu-item>
                     <hr />
                     <span class="sidebar-title">订单中心</span>
-                    <el-menu-item index="5" route="/orders">
+                    <el-menu-item index="/orders" route="/orders">
                         <el-icon>
                             <document-copy />
                         </el-icon>
                         <span>我的订单</span>
                     </el-menu-item>
-                    <el-menu-item index="6" route="/rate">
+                    <el-menu-item index="/rate" route="/rate">
                         <el-icon>
                             <circle-check />
                         </el-icon>
                         <span>我的评价</span>
                     </el-menu-item>
-                    <el-menu-item index="7" route="/apply">
+                    <!-- <el-menu-item index="/apply" route="/apply">
                         <el-icon>
                             <sold-out />
                         </el-icon>
                         <span>我的申请</span>
+                    </el-menu-item>-->
+                    <hr />
+                    <div>
+                        <span class="sidebar-title">账户管理</span>
+                    </div>
+                    <el-menu-item index="/userInfo" route="/userInfo">
+                        <el-icon>
+                            <user />
+                        </el-icon>
+                        <span>个人信息</span>
+                    </el-menu-item>
+                    <el-menu-item index="/passwordEdit" route="/passwordEdit">
+                        <el-icon>
+                            <key />
+                        </el-icon>
+                        <span>修改密码</span>
                     </el-menu-item>
                 </el-menu>
             </el-col>
@@ -57,8 +73,14 @@
 </template>
 <script setup>
 import {
-    User, House, Collection, Warning, DocumentCopy, CircleCheck, SoldOut
+    User, House, Collection, Warning, DocumentCopy, CircleCheck, SoldOut, Bell, Key
 } from '@element-plus/icons-vue'
+import { computed } from '@vue/reactivity';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const onRoutes = computed(() => {
+    return route.path;
+})
 </script>
 <style scoped>
 hr {
@@ -77,7 +99,7 @@ span {
     line-height: 52px;
     color: #333;
 }
-.sidebar-layout{
+.sidebar-layout {
     width: 147px;
 }
 </style>

@@ -60,7 +60,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 // More info see https://github.com/element-plus/element-plus/blob/dev/docs/examples/form/utils.ts
-import { resetForm, submitForm } from '../utils/index'
+import { resetForm, submitForm } from '../../../utils/index'
 import { ElForm } from 'element-plus'
 
 const formSize = ref('')

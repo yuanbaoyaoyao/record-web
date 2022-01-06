@@ -50,58 +50,70 @@ const routes = [{
     }, {
         path: '/accountSetting',
         component: AccountSetting,
-        redirect: '/userInfo',
-        children: [{
-            path: '/userInfo',
-            name: 'UserInfo',
-            meta: {
-                title: '个人信息'
+        redirect: '/notify',
+        children: [
+
+            {
+                path: '/notify',
+                name: 'Notify',
+                meta: {
+                    title: '消息通知'
+                },
+                component: () => import('../views/user/Notify.vue')
             },
-            component: () => import('../views/UserInfo.vue')
-        }, {
-            path: '/deliveryAddress',
-            name: 'DeliveryAddress',
-            meta: {
-                title: '收货地址'
+            {
+                path: '/deliveryAddress',
+                name: 'DeliveryAddress',
+                meta: {
+                    title: '收货地址'
+                },
+                component: () => import('../views/user/DeliveryAddress.vue')
             },
-            component: () => import('../views/deliveryAddress.vue')
-        }, {
-            path: '/collects',
-            name: 'Collects',
-            meta: {
-                title: '我的收藏'
-            },
-            component: () => import('../views/collects.vue')
-        }, {
-            path: '/feedback',
-            name: 'Feedback',
-            meta: {
-                title: '我的反馈'
-            },
-            component: () => import('../views/feedback.vue')
-        }, {
-            path: '/orders',
-            name: 'Orders',
-            meta: {
-                title: '我的订单'
-            },
-            component: () => import('../views/orders.vue')
-        }, {
-            path: '/rate',
-            name: 'Rate',
-            meta: {
-                title: '我的评价'
-            },
-            component: () => import('../views/rate.vue')
-        }, {
-            path: '/apply',
-            name: 'Apply',
-            meta: {
-                title: '我的申请'
-            },
-            component: () => import('../views/apply.vue')
-        }]
-    },]
+            {
+                path: '/collects',
+                name: 'Collects',
+                meta: {
+                    title: '我的收藏'
+                },
+                component: () => import('../views/user/Collects.vue')
+            }, {
+                path: '/feedback',
+                name: 'Feedback',
+                meta: {
+                    title: '我的反馈'
+                },
+                component: () => import('../views/user/Feedback.vue')
+            }, {
+                path: '/orders',
+                name: 'Orders',
+                meta: {
+                    title: '我的订单'
+                },
+                component: () => import('../views/order/Orders.vue')
+            }, {
+                path: '/rate',
+                name: 'Rate',
+                meta: {
+                    title: '我的评价'
+                },
+                component: () => import('../views/order/Rate.vue')
+            }, {
+                path: '/userInfo',
+                name: 'UserInfo',
+                meta: {
+                    title: '个人信息'
+                },
+                component: () => import('../views/account/UserInfo.vue')
+            }, {
+                path: '/passwordEdit',
+                name: 'PasswordEdit',
+                meta: {
+                    title: '修改密码'
+                },
+                component: () => import('../views/account/PasswordEdit.vue')
+            }
+        ]
+    }, ]
 }]
 
 const router = createRouter({
