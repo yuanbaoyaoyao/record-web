@@ -1,36 +1,6 @@
 <template>
     <div class="dashboard">
-        <div class="dashboard-header">
-            <div class="dashboard-logo">
-                <a href="#">
-                    <img src="../assets/sysLogo.svg" style="display:block;width:110px;height:auto" />
-                </a>
-            </div>
-            <div>
-                <div class="dashboard-search-top">
-                    <div class="search-input">
-                        <el-input
-                            v-model="input"
-                            placeholder="Please input"
-                            :prefix-icon="Search"
-                            clearable
-                        />
-                    </div>
-                    <div class="search-button">
-                        <el-button type="primary">Search</el-button>
-                    </div>
-                </div>
-                <div class="dashboard-search-down">
-                    <a
-                        :href="item.linkname"
-                        target="_blank"
-                        v-for="(item,index) in arraySearch"
-                        :key="index"
-                    >{{ item.name }}</a>
-                </div>
-            </div>
-            <div class="dashboard-blank"></div>
-        </div>
+        <v-dashboard-header />
         <div class="dashboard-content">
             <div class="dashboard-content-left">
                 <h4>耗材选择</h4>
@@ -99,37 +69,7 @@
 <script setup>
 import { Star, DocumentChecked, Warning, Search } from '@element-plus/icons-vue';
 import { ref } from 'vue';
-const input = ref('')
-const arraySearch = [
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-    {
-        name: "88a",
-        linkname: "http://www.baidu.com",
-    },
-]
+import VDashboardHeader from '../components/DashboardHeader.vue';
 const listData = [
     {
         icon: "fas fa-cubes",
@@ -209,37 +149,7 @@ img {
     width: 1190px !important;
     margin: auto;
 }
-.dashboard-header {
-    display: grid;
-    grid-template-columns: 20% 55% auto;
-    justify-items: center;
-    margin: 25px;
-}
-.dashboard-logo {
-    margin-right: 40px;
-}
-.dashboard-search-top {
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    margin-top: 10px;
-}
-.search-input {
-    width: 535px;
-    border-radius: 15px;
-}
-.search-input :deep() .el-input__inner {
-    height: 50px;
-}
-.search-button > .el-button {
-    height: 50px;
-}
-.dashboard-search-down {
-    display: flex;
-}
-.dashboard-search-down > a {
-    margin-left: 5px;
-}
+
 .dashboard-content {
     display: grid;
     grid-template-columns: 20% 44% auto;
