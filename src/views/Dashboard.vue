@@ -73,30 +73,24 @@
                     <span>新鲜事儿都在这里～</span>
                 </div>
                 <div class="dashboard-user-button">
-                    <div class="button-info">
+                    <router-link to="/collects" class="link-info">
                         <el-icon>
                             <star />
                         </el-icon>
-                        <el-button type="text">
-                            <span class="button-text">我的收藏</span>
-                        </el-button>
-                    </div>
-                    <div class="button-info">
+                        <span class="link-text">我的收藏</span>
+                    </router-link>
+                    <router-link to="/orders" class="link-info">
                         <el-icon>
                             <document-checked />
                         </el-icon>
-                        <el-button type="text">
-                            <span class="button-text">我的订单</span>
-                        </el-button>
-                    </div>
-                    <div class="button-info">
+                        <span class="link-text">我的订单</span>
+                    </router-link>
+                    <router-link to="/feedback" class="link-info">
                         <el-icon>
                             <warning />
                         </el-icon>
-                        <el-button type="text">
-                            <span class="button-text">我的反馈</span>
-                        </el-button>
-                    </div>
+                        <span class="link-text">我的反馈</span>
+                    </router-link>
                 </div>
             </div>
         </div>
@@ -288,16 +282,18 @@ img {
     display: grid;
     grid-template-columns: auto auto auto;
 }
-.dashboard-logo-img {
-    font-size: x-large;
-}
-.button-info {
+.link-info {
     margin: auto;
     display: grid;
     grid-template-rows: auto auto;
     justify-items: center;
     align-items: center;
     font-size: x-large;
+}
+.link-text {
+    font-size: 18px;
+    margin: 5px;
+    color: rgb(94, 90, 90);
 }
 .notice-title {
     margin-right: 10px;
