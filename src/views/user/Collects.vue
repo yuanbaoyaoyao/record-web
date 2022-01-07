@@ -6,8 +6,8 @@
         <hr />
         <div class="collect-content">
             <el-row>
-                <el-col v-for="(o, index) in 2" :key="o" :span="8" :offset="index > 0 ? 2 : 0">
-                    <el-card :body-style="{ padding: '0px' }">
+                <el-col v-for="(o, index) in 3" :key="o" :span="6" :offset="index > 0 ? 2 : 0">
+                    <el-card shadow="never" :body-style="{ padding: '0px' }">
                         <el-link href="http://www.baidu.com" target="_blank" :underline="false">
                             <img
                                 src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
@@ -25,7 +25,8 @@
                             </div>
                         </div>
                         <div class="button">
-                            <el-button type="primary">Operating</el-button>
+                            <el-button type="primary">删除</el-button>
+                            <el-button type="primary">查看详情</el-button>
                         </div>
                     </el-card>
                 </el-col>
@@ -38,6 +39,13 @@ import { ref } from "vue";
 const currentDate = ref(new Date())
 </script>
 <style scoped>
+hr {
+    width: 1004px;
+}
+.el-card{
+    border: transparent !important;
+    margin-left: 40px;
+}
 :deep().el-button {
     transition-property: opacity;
     transition-duration: 1s;
@@ -65,12 +73,5 @@ const currentDate = ref(new Date())
     width: 280px;
     height: 280px;
     margin: 15px;
-}
-:deep().el-form-item__label {
-    width: 80px !important;
-}
-:deep().el-input__inner,
-:deep().el-textarea__inner {
-    width: 550px;
 }
 </style>

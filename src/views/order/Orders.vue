@@ -5,68 +5,96 @@
         </div>
         <hr />
         <div class="order-select">
-            <ul class="order-select-detail">
-                <li>
-                    <a href="http://www.baidu.com">全部订单</a>
-                </li>
-                <li>
-                    <a href="http://www.baidu.com">待支付</a>
-                </li>
-                <li>
-                    <a href="http://www.baidu.com">待收货</a>
-                </li>
-                <li>
-                    <a href="http://www.baidu.com">待评价</a>
-                </li>
-            </ul>
+            <div>
+                <ul class="order-select-detail">
+                    <li>
+                        <a href="http://www.baidu.com">全部订单</a>
+                    </li>
+                    <li>
+                        <a href="http://www.baidu.com">待支付</a>
+                    </li>
+                    <li>
+                        <a href="http://www.baidu.com">待收货</a>
+                    </li>
+                    <li>
+                        <a href="http://www.baidu.com">待评价</a>
+                    </li>
+                </ul>
+            </div>
+            <el-input v-model="search" size="small" placeholder="Type to search" />
         </div>
         <div class="order-list">
-            <el-table
-                ref="multipleTable"
-                :data="tableData"
-                :default-sort="{ prop: 'date', order: 'descending' }"
-                style="width: 100%"
-            >
-                <el-table-column type="selection" width="55" />
-                <el-table-column prop="name" label="姓名" width="180" />
-                <el-table-column prop="date" label="注册时间" sortable width="180" />
-                <el-table-column prop="address" label="地址" />
+            <el-table :data="filterTableData" style="width: 100%">
+                <el-table-column label="时间" prop="date" />
+                <el-table-column label="订单号" prop="number" />
+                <el-table-column label="订单状态" prop="state" />
                 <el-table-column fixed="right" label="操作" width="120">
-                    <template #default>
-                        <el-button type="text" size="small">详情</el-button>
+                    <template #default="scope">
+                        <el-button size="small" @click="handleEdit(scope.$index, scope.row)">查看详情</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
     </div>
 </template>
-<script lang="ts" setup>
-import { ref } from 'vue'
+<script setup>
+import { ref, computed } from 'vue'
+
+const search = ref('')
+const filterTableData = computed(() =>
+    tableData.filter(
+        (data) =>
+            !search.value ||
+            data.number.toLowerCase().includes(search.value.toLowerCase())
+    )
+)
+const handleEdit = (index, row) => {
+    console.log(index, row)
+}
 
 const tableData = [
     {
         date: '2016-05-03',
-        name: 'Tom',
+        number: '342423423',
+        state: '已收货',
         address: 'No. 189, Grove St, Los Angeles',
     },
     {
         date: '2016-05-02',
-        name: 'Tom',
+        number: '342423423',
+        state: '已收货',
+
         address: 'No. 189, Grove St, Los Angeles',
     },
     {
         date: '2016-05-04',
-        name: 'Tom',
+        number: '342423423',
+        state: '已收货',
+
         address: 'No. 189, Grove St, Los Angeles',
     },
     {
         date: '2016-05-01',
-        name: 'Tom',
+        number: '342423423',
+        state: '未收货',
         address: 'No. 189, Grove St, Los Angeles',
     },
 ]
 </script>
 <style scoped>
+hr {
+    width: 1004px;
+}
+a {
+    text-decoration: none;
+}
+a:active {
+    color: #409eff;
+    text-decoration: none;
+}
+:deep().el-input {
+    width: 200px !important;
+}
 .order {
     margin: 25px;
 }
@@ -74,18 +102,18 @@ const tableData = [
     font-weight: 500;
 }
 .order-select {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
 }
 .order-select-detail {
     margin: 0;
+    margin-left: 10px;
     float: left;
     list-style-type: none;
     display: grid;
     grid-template-columns: auto auto auto auto;
     width: 400px;
     padding: 0px;
-}
-a {
-    text-decoration: none;
 }
 </style>

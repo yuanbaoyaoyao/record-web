@@ -1,52 +1,72 @@
 <template>
-    <div class="info">
+    <div class="feedback">
         <div>
-            <h2 class="info-title">我的反馈</h2>
+            <h2 class="feedback-title">我的反馈</h2>
         </div>
         <hr />
-        <div class="info-content">
-            <div class="info-table">
-                <el-form
-                    ref="ruleFormRef"
-                    :model="ruleForm"
-                    :rules="rules"
-                    label-width="120px"
-                    class="demo-ruleForm"
-                    :size="formSize"
-                >
-                    <el-form-item label="个性签名" prop="desc">
-                        <el-input v-model="ruleForm.desc" type="textarea"></el-input>
-                    </el-form-item>
-                    <el-form-item label="上传图片" prop="desc">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :file-list="fileList"
-                            list-type="picture"
-                        >
-                            <el-button type="primary">Click to upload</el-button>
-                            <template #tip>
-                                <div
-                                    class="el-upload__tip"
-                                >jpg/png files with a size less than 500kb</div>
-                            </template>
-                        </el-upload>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
-                        <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-                    </el-form-item>
-                </el-form>
+        <div class="feedback-content">
+            <div class="feedback-info">
+                <div class="feedback-info-title">
+                    <span>能不能买快点</span>
+                </div>
+                <div class="feedback-info-content">
+                    <span>时间: fjlakdjflajdf</span>
+                    <span class="division">|</span>
+
+                    <span>服务单号: flkdjakflja</span>
+                </div>
+            </div>
+            <div class="feedback-pic">
+                <el-image :src="src"></el-image>
+                <span>88a</span>
+                <el-button plain>查看详情</el-button>
             </div>
         </div>
     </div>
+    <el-dialog v-model="dialogFormVisible" title="新建反馈单">
+        <el-form
+            ref="ruleFormRef"
+            :model="ruleForm"
+            :rules="rules"
+            label-width="120px"
+            class="demo-ruleForm"
+            :size="formSize"
+        >
+            <el-form-item label="个性签名" prop="desc">
+                <el-input v-model="ruleForm.desc" type="textarea"></el-input>
+            </el-form-item>
+            <el-form-item label="上传图片" prop="desc">
+                <el-upload
+                    class="upload-demo"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :on-preview="handlePreview"
+                    :on-remove="handleRemove"
+                    :file-list="fileList"
+                    list-type="picture"
+                >
+                    <el-button type="primary">Click to upload</el-button>
+                    <template #tip>
+                        <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+                    </template>
+                </el-upload>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
+                <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取消</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false">确定</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 <script setup>
 import { reactive, ref } from 'vue'
-// More info see https://github.com/element-plus/element-plus/blob/dev/docs/examples/form/utils.ts
-import { resetForm, submitForm } from '../utils/index'
+// More feedback see https://github.com/element-plus/element-plus/blob/dev/docs/examples/form/utils.ts
+import { resetForm, submitForm } from '../../utils/index'
 import { ElForm } from 'element-plus'
 import { UploadFile } from 'element-plus/es/components/upload/src/upload.type'
 
@@ -63,6 +83,8 @@ const ruleForm = reactive({
     resource: '',
     desc: '',
 })
+const src =
+    'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
 
 const fileList = ref([
     {
@@ -144,18 +166,44 @@ const rules = reactive({
 })
 </script>
 <style scoped>
-.info {
+hr {
+    width: 1004px;
+}
+:deep().el-image__inner {
+    height: 144px !important;
+    width: 144px !important;
+}
+.feedback {
     margin: 25px;
 }
-.info-title {
+.feedback-title {
     font-weight: 500;
 }
-.info-content {
+.feedback-content {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    border: solid;
+    border: 1px solid #cfeeab;
 }
-.info-table {
-    min-width: 760px;
+.feedback-info {
+    border-bottom: 1px solid #cfeeab;
+    padding: 25px 30px;
+    color: rgb(136, 190, 136);
+}
+.division {
+    margin: 5px;
+}
+.feedback-info-content {
+    color: rgb(94, 88, 88);
+}
+.feedback-info-title {
+    margin-bottom: 10px;
+}
+.feedback-pic {
+    display: grid;
+    grid-template-columns: 20% auto 20%;
+    padding: 25px 30px;
+    align-items: center;
 }
 :deep().el-form-item__label {
     width: 80px !important;
