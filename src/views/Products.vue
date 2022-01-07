@@ -1,67 +1,32 @@
 <template>
-    <div class="dashboard">
+    <div class="products">
         <v-dashboard-header />
-        <div class="dashboard-content">
-            <div class="dashboard-content-left">
-                <h4>耗材选择</h4>
-                <div class="dashboard-consumables-list">
-                    <ul v-for="(item,index) in listData" :key="index" class="list-ul">
-                        <li class="dashboard-consumables-list-detail">
-                            <div class="list-detail-icon">
-                                <i :class="item.icon"></i>
-                            </div>
-                            <div class="list-detail-text">
-                                <a :href="item.linkname" target="_blank">{{ item.name }}</a>
-                                <span>/</span>
-                                <a :href="item.linkevent" target="_blank">{{ item.event }}</a>
-                                <span>/</span>
-                                <a :href="item.linkevent" target="_blank">{{ item.event }}</a>
-                            </div>
-                        </li>
+        <div class="products-content">
+            <div class="products-filter">
+                <!-- title动态 -->
+                <div class="products-filter-title">products-filter-title</div>
+                <div>
+                    <ul class="products-filter-content">
+                        <li>轻薄笔记本1</li>
+                        <li>轻薄笔记本2</li>
+                        <li>轻薄笔记本3</li>
+                        <li>轻薄笔记本4</li>
+                        <li>轻薄笔记本5</li>
+                        <li>轻薄笔记本6</li>
                     </ul>
                 </div>
             </div>
-            <div class="dashboard-content-center">
-                <el-carousel>
-                    <el-carousel-item v-for="item in 4" :key="item">
-                        <h3>{{ item }}</h3>
-                    </el-carousel-item>
-                </el-carousel>
-            </div>
-            <div class="dashboard-content-right">
-                <div class="dashboard-user-avatar">
-                    <el-avatar
-                        :size="80"
-                        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                    ></el-avatar>
-                    <h3>欢迎</h3>
-                </div>
-                <div class="dashboard-user-notice">
-                    <span class="notice-title">
-                        <b>公告</b>
-                    </span>
-                    <span>新鲜事儿都在这里～</span>
-                </div>
-                <div class="dashboard-user-button">
-                    <router-link to="/collects" class="link-info">
-                        <el-icon>
-                            <star />
-                        </el-icon>
-                        <span class="link-text">我的收藏</span>
-                    </router-link>
-                    <router-link to="/orders" class="link-info">
-                        <el-icon>
-                            <document-checked />
-                        </el-icon>
-                        <span class="link-text">我的订单</span>
-                    </router-link>
-                    <router-link to="/feedback" class="link-info">
-                        <el-icon>
-                            <warning />
-                        </el-icon>
-                        <span class="link-text">我的反馈</span>
-                    </router-link>
-                </div>
+            <div>
+                <el-row>
+                    <el-col v-for="(o, index) in 6" :key="o" :span="4" :offset="index > 0 ? 2 : 0">
+                        <el-card shadow="hover" :body-style="{ padding: '0px' }">
+                            <el-link href="http://www.baidu.com" target="_blank" :underline="false">
+                                <el-image style="width: 200px; height: 200px" :src="url" :fit="fit"></el-image>
+                                <span>Yummy hamburger</span>
+                            </el-link>
+                        </el-card>
+                    </el-col>
+                </el-row>
             </div>
         </div>
     </div>
@@ -70,6 +35,9 @@
 import { Star, DocumentChecked, Warning, Search } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import VDashboardHeader from '../components/DashboardHeader.vue';
+const fits = ['fill', 'contain', 'cover', 'none', 'scale-down']
+const url =
+    'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
 const listData = [
     {
         icon: "fas fa-cubes",
@@ -139,92 +107,84 @@ h4 {
     text-align: center;
     margin: 0px;
 }
-img {
-    height: fit-content;
-    width: fit-content;
+:deep().el-card {
+    transition-property: transform;
+    transition-duration: 0.5s;
+    animation: cardShadow 0.5s;
+    animation-fill-mode: forwards;
 }
-.dashboard {
+:deep().el-card:hover {
+    transition-property: transform;
+    transition-duration: 0.5s;
+    transform: translateY(-2px);
+    animation: cardShadow_hover 0.5s;
+    animation-fill-mode: forwards;
+}
+@keyframes cardShadow_hover {
+    from {
+        box-shadow: 0px 0px 0px 0px rgb(252, 249, 249);
+    }
+    to {
+        box-shadow: 0px 0px 5px 2px rgb(161, 159, 159);
+    }
+}
+@keyframes cardShadow {
+    from {
+        box-shadow: 0px 0px 5px 2px rgb(161, 159, 159);
+    }
+    to {
+        box-shadow: 0px 0px 0px 0px rgb(252, 249, 249);
+    }
+}
+
+:deep() td {
+    display: flex;
+}
+:deep().el-card__body {
+    width: 200px;
+}
+.el-row {
+    display: grid !important;
+    grid-template-columns: auto auto auto auto;
+    grid-template-rows: auto auto auto auto;
+    justify-items: center;
+}
+:deep().el-col-offset-2 {
+    margin-left: 0;
+}
+:deep().el-col-4 {
+    max-width: 100%;
+}
+.products-filter-content {
+    display: flex;
+    margin: 0;
+    padding-left: 10px;
+}
+.products-filter-content > li {
+    margin-right: 10px;
+}
+.products {
     display: flex;
     flex-direction: column;
     width: 1190px !important;
     margin: auto;
 }
 
-.dashboard-content {
-    display: grid;
-    grid-template-columns: 20% 44% auto;
+.products-filter {
+    display: flex;
+    border: solid 1px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+.products-filter-title {
+    border-right: solid 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.products-content {
+    display: flex;
+    flex-direction: column;
     background-color: white;
     border-radius: 15px;
-}
-.dashboard-content-left,
-.dashboard-content-right,
-.dashboard-content-center {
-    margin: 20px;
-    border-radius: 15px;
-}
-.el-carousel--horizontal {
-    border-radius: 15px;
-}
-.dashboard-consumables-list-detail {
-    display: grid;
-    grid-template-columns: auto auto;
-}
-.list-detail-icon {
-    text-align: center;
-}
-.list-detail-text {
-    display: flex;
-    justify-content: space-around;
-}
-.dashboard-content-right {
-    display: grid;
-    grid-template-rows: auto auto;
-    background-color: whitesmoke;
-}
-.dashboard-user-avatar {
-    margin: auto;
-}
-.dashboard-user-notice,
-.dashboard-user-button {
-    margin: 5px;
-}
-.dashboard-user-button {
-    display: grid;
-    grid-template-columns: auto auto auto;
-}
-.link-info {
-    margin: auto;
-    display: grid;
-    grid-template-rows: auto auto;
-    justify-items: center;
-    align-items: center;
-    font-size: x-large;
-}
-.link-text {
-    font-size: 18px;
-    margin: 5px;
-    color: rgb(94, 90, 90);
-}
-.notice-title {
-    margin-right: 10px;
-    font-family: tahoma, arial, "Hiragino Sans GB", 宋体, sans-serif !important;
-    font-size: large;
-    color: black;
-}
-.el-carousel__item h3 {
-    color: #475669;
-    font-size: 18px;
-    opacity: 0.75;
-    line-height: 300px;
-    margin: 0;
-    text-align: center;
-}
-
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
 }
 </style>
