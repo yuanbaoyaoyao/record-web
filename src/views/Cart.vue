@@ -88,7 +88,7 @@
     </div>
 </template>
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed} from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
@@ -208,6 +208,9 @@ const openMessage = () => {
 .cart-header-search-input :deep() .el-input__inner {
     height: 50px;
 }
+.search-button > .el-button {
+    height: 50px;
+}
 .cart-list-bottom {
     display: grid;
     grid-template-columns: 90% auto;
@@ -221,16 +224,13 @@ const openMessage = () => {
     justify-content: space-between;
 }
 .cart-select-count,.cart-money-count{
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 20px;
 }
 .el-button.el-button--info,
 .el-button.el-button--primary {
     width: 100%;
+    height: 60px;
     line-height: 0% !important;
-}
-.search-button > .el-button {
-    height: 50px;
 }
 :deep().el-table__header .el-checkbox::after {
     content: "全选";

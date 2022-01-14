@@ -102,14 +102,11 @@ img {
 .dashboard-logo {
     margin-right: 40px;
 }
-.dashboard-search-top {
+.dashboard-search-top{
     display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    margin-top: 10px;
 }
 .search-input {
-    width: 535px;
+    width: 300px;
     border-radius: 15px;
 }
 .search-input :deep() .el-input__inner {

@@ -51,6 +51,9 @@
 import { HomeFilled, Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus/icons-vue';
 </script>
 <style scoped>
+hr{
+    color: rgb(224, 222, 222);
+}
 .header {
     position: absolute;
     box-sizing: border-box;
