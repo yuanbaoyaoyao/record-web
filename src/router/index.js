@@ -48,6 +48,13 @@ const routes = [{
         },
         component: () => import("../views/Cart.vue")
     }, {
+        path: "/confirmOrder",
+        name: "ConfirmOrder",
+        meta: {
+            title: '确认订单'
+        },
+        component: () => import("../views/ConfirmOrder.vue")
+    }, {
         path: '/accountSetting',
         component: AccountSetting,
         redirect: '/notify',
