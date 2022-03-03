@@ -12,9 +12,14 @@
     "@fortawesome/free-brands-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "axios": "^0.26.0",
+    "dotenv": "^16.0.0",
     "element-plus": "^1.2.0-beta.6",
+    "js-cookie": "^3.0.1",
+    "nprogress": "^0.2.0",
     "vue": "^3.2.25",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.12",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.0",

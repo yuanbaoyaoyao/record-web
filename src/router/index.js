@@ -2,31 +2,37 @@ import {
     createRouter,
     createWebHashHistory
 } from "vue-router"
-import Home from "../views/Home.vue";
+import Layout from "../views/Home.vue";
 import AccountSetting from "../views/AccountSetting.vue";
 
-const routes = [{
-    path: '/',
-    redirect: '/dashboard'
-}, {
-    path: "/",
-    name: "Home",
-    component: Home,
-    children: [{
-        path: "/dashboard",
-        name: "Dashboard",
+export const constantRoutes = [
+    {
+        path: '/login',
         meta: {
-            title: '客户端首页'
-        },
-        component: () => import("../views/Dashboard.vue")
-    }, {
-        path: "/login",
-        name: "Login",
-        meta: {
-            title: '登录页'
+            title: "登录",
         },
         component: () => import("../views/Login.vue")
-    }, {
+    },
+    {
+        path: "",
+        name: "Home",
+        component: Layout,
+        redirect: '/dashboard',
+        meta: {
+            title: "首页"
+        },
+        children: [{
+            path: "/dashboard",
+            name: "dashboard",
+            meta: {
+                title: '客户端首页',
+            },
+            component: () => import("../views/Dashboard.vue")
+        },
+
+        ]
+    },
+    {
         path: "/products",
         name: "Products",
         meta: {
@@ -120,11 +126,50 @@ const routes = [{
                 component: () => import('../views/account/PasswordEdit.vue')
             }
         ]
-    }, ]
-}]
+    },
+]
+
+export const asyncRoutes = [
+    //     {
+    //     path: '/',
+    //     redirect: '/dashboard'
+    // }, 
+    // {
+    //     path: "/",
+    //     name: "Home",
+    //     component: Home,
+    //     children: [{
+    //         path: "/dashboard",
+    //         name: "Dashboard",
+    //         meta: {
+    //             title: '客户端首页'
+    //         },
+    //         component: () => import("../views/Dashboard.vue")
+    //     },
+    //      {
+    //         path: "/login",
+    //         name: "Login",
+    //         meta: {
+    //             title: '登录页'
+    //         },
+    //         component: () => import("../views/Login.vue")
+    //     }, 
+]
+// }]
 
 const router = createRouter({
     history: createWebHashHistory(),
-    routes
+    routes: constantRoutes
 })
+
+export function resetRouter() {
+    const newRouter = createRouter({
+        //路由模式带“#”号
+        history: createWebHashHistory(),
+        scrollBehavior: () => ({ y: 0 }),
+        routes: constantRoutes
+    })
+    router.matcher = newRouter.matcher // reset router
+}
+
 export default router;

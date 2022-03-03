@@ -9,14 +9,31 @@
                 </div>
                 <span>耗材管理系统</span>
             </router-link>
-            <router-link to="accountSetting">
-                <div class="header-icon">
-                    <el-icon>
-                        <Avatar />
-                    </el-icon>
-                </div>
-                <span>元宝</span>
-            </router-link>
+            <div class="header-icon">
+                <el-icon>
+                    <Avatar />
+                </el-icon>
+            </div>
+            <div>
+                <el-dropdown>
+                    <span class="el-dropdown-link">
+                        元宝
+                        <el-icon class="el-icon--right">
+                            <arrow-down />
+                        </el-icon>
+                    </span>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <router-link to="accountSetting">
+                                <el-dropdown-item>个人中心</el-dropdown-item>
+                            </router-link>
+                            <el-dropdown-item divided @click="logout">退出</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </div>
+
+            <!-- <span>元宝</span> -->
         </div>
         <div class="header-right">
             <router-link to="cart">
@@ -48,10 +65,22 @@
     </div>
 </template>
 <script setup>
-import { HomeFilled, Avatar, ShoppingCart, FolderOpened, ChatDotSquare } from '@element-plus/icons-vue';
+import { HomeFilled, Avatar, ShoppingCart, FolderOpened, ChatDotSquare, ArrowDown } from '@element-plus/icons-vue';
+import { useStore } from 'vuex';
+import { useRouter,useRoute } from 'vue-router';
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+
+const logout = () => {
+    store.dispatch('LogOut').then(() => {
+
+        router.push(`/login?redirect=${route.fullPath}`)
+    })
+}
 </script>
 <style scoped>
-hr{
+hr {
     color: rgb(224, 222, 222);
 }
 .header {
@@ -70,7 +99,9 @@ hr{
 .header-left {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
+
 .header {
     margin: auto;
 }
