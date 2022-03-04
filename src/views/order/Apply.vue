@@ -11,18 +11,47 @@
                 :rules="rules"
                 label-width="120px"
                 class="demo-ruleForm"
-                :size="formSize"
             >
-                <el-form-item label="耗材类别" prop="name">
-                    <el-input v-model="ruleForm.name"></el-input>
+                <el-form-item label="耗材类别" prop="type">
+                    <el-autocomplete
+                        v-model="ruleForm.type"
+                        value-key="title"
+                        :fetch-suggestions="querySearchProduct"
+                        :trigger-on-focus="true"
+                        class="inline-input"
+                        placeholder="请输入耗材类别"
+                        @select="handleSelect(ruleForm.type)"
+                    />
+                    <template v-if="typeTagVisible">
+                        <el-tag class="ml-2" type="success">在库耗材类型</el-tag>
+                    </template>
+                    <template v-else>
+                        <el-tag class="ml-2" type="info">未在库耗材类型</el-tag>
+                    </template>
                 </el-form-item>
 
-                <el-form-item label="耗材型号" prop="name">
-                    <el-input v-model="ruleForm.name"></el-input>
+                <el-form-item label="耗材型号" prop="model">
+                    <el-autocomplete
+                        v-model="ruleForm.model"
+                        value-key="title"
+                        :fetch-suggestions="querySearchProductSkus"
+                        :trigger-on-focus="true"
+                        class="inline-input"
+                        placeholder="请输入耗材型号"
+                    />
+                    <template v-if="modelTagVisible && typeTagVisible">
+                        <el-tag class="ml-2" type="success">在库耗材型号</el-tag>
+                    </template>
+                    <template v-else>
+                        <el-tag class="ml-2" type="info">未在库耗材型号</el-tag>
+                    </template>
                 </el-form-item>
 
-                <el-form-item label="耗材数量" prop="name">
-                    <el-input v-model="ruleForm.name"></el-input>
+                <el-form-item label="耗材数量" prop="number">
+                    <el-input v-model="ruleForm.number" placeholder="请输入数量"></el-input>
+                    <template v-if="modelTagVisible && typeTagVisible">
+                        <el-tag class="ml-2" type="success">总数量为88</el-tag>
+                    </template>
                 </el-form-item>
 
                 <el-form-item label="图片">
@@ -46,18 +75,59 @@
 
                 <el-form-item class="button">
                     <span class="dialog-footer">
-                        <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
-                        <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+                        <el-button type="primary" @click="open(ruleFormRef)">创建申请</el-button>
+                        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
                     </span>
                 </el-form-item>
             </el-form>
         </div>
     </div>
 </template>
-<script setup>
+<script  setup>
 import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons'
+import router from '../../router';
+import { listProductAPI } from '../../api/product';
+import { listProductSkusAPI } from '../../api/product-skus'
+
+const querySearchProduct = (queryString, cb) => {
+    let lists = []
+    listProductAPI(querySearchList.value).then(res => {
+
+        for (let i = 0; i < res.data.records.length; i++) {
+            lists[i] = res.data.records[i]
+        }
+        const results = queryString ? lists.filter(createFilter(queryString)) : lists
+        cb(results)
+    })
+}
+
+const querySearchProductSkus = (queryString, cb) => {
+    let lists = []
+    querySearchList.value.keyword1 = ruleForm.type
+    listProductSkusAPI(querySearchList.value).then(res => {
+        for (let i = 0; i < res.data.records.length; i++) {
+            lists[i] = res.data.records[i]
+        }
+        const results = queryString ? lists.filter(createFilter(queryString)) : lists
+        cb(results)
+    })
+}
+
+const createFilter = (queryString) => {
+    return (list) => {
+        return (
+            list.title.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        )
+    }
+}
+
+const handleSelect = (item) => {
+}
+
+const typeTagVisible = ref(false)
+const modelTagVisible = ref(false)
 
 const qiniuDomain = 'r6ctg8uno.hd-bkt.clouddn.com';
 const qiniuUploadData = ref({
@@ -65,14 +135,58 @@ const qiniuUploadData = ref({
     key: ""
 })
 
-const defaultFormTemp = ref({
-    title: '',
-    productName: '',
-    avatar: '',
-    productId: ''
-})
+const open = (formName) => {
+    if (!formName) return
+    //添加handleconfirm
+    formName.validate((valid) => {
+        console.log('2')
+        if (valid) {
+        console.log('3')
 
-const defaultForm = ref(Object.assign({}, defaultFormTemp.value));
+            ElMessageBox.confirm(
+                '是否确认提交申请单',
+                {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            ).then(() => {
+                ElMessage({
+                    type: 'success',
+                    message: '提交成功',
+                })
+                ElMessageBox.confirm(
+                    '[已提交] 是否继续填写申请单',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'success',
+                    }
+                ).then(() => {
+                    resetForm(ruleFormRef.value)
+                    ElMessage({
+                        type: 'success',
+                        message: '继续填写申请单',
+                    })
+                })
+                    .catch(() => {
+                        router.push('/orders')
+                    })
+            })
+                .catch(() => {
+                    ElMessage({
+                        type: 'info',
+                        message: '取消申请单',
+                    })
+                })
+        }
+        else {
+            console.log("false")
+            return false
+        }
+    })
+
+}
 
 const imageUrl = ref('')
 const handleAvatarSuccess = (res, file) => {
@@ -91,99 +205,68 @@ const beforeAvatarUpload = (file) => {
     return isJPG && isLt2M
 }
 
+const querySearchList = ref({
+    keyword1: null,
+    keyword2: null
+})
 
-const formSize = ref('')
-const ruleFormRef = ref()
+const ruleFormRef = ref({})
+
 const ruleForm = reactive({
-    name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
+    type: '',
+    model: '',
+    number: '',
     desc: '',
 })
 
+const validateType = (rule, value, callback) => {
+    console.log("调用validateType")
+    if (value === '') {
+        callback(new Error('请输入耗材类型'))
+    }
+    callback()
+    // else {
+    //     if (ruleForm.checkPass !== '') {
+    //         if (!ruleFormRef.value) return
+    //         ruleFormRef.value.validateField('checkPass', () => null)
+    //     }
+    //     callback()
+    // }
+}
+const validateModel = (rule, value, callback) => {
+    console.log("调用validateModel")
+    if (value === '') {
+        callback(new Error('请输入耗材型号'))
+    }
+    callback()
+}
+
 const rules = reactive({
-    name: [
+    type: [{ required: true, validator: validateType, trigger: 'input' }],
+    model: [{ required: true, validator: validateModel, trigger: 'input' }],
+    number: [
         {
             required: true,
-            message: 'Please input Activity name',
-            trigger: 'blur',
-        },
-        {
-            min: 3,
-            max: 5,
-            message: 'Length should be 3 to 5',
-            trigger: 'blur',
-        },
-    ],
-    region: [
-        {
-            required: true,
-            message: 'Please select Activity zone',
-            trigger: 'change',
-        },
-    ],
-    date1: [
-        {
-            type: 'date',
-            required: true,
-            message: 'Please pick a date',
-            trigger: 'change',
-        },
-    ],
-    date2: [
-        {
-            type: 'date',
-            required: true,
-            message: 'Please pick a time',
-            trigger: 'change',
-        },
-    ],
-    type: [
-        {
-            type: 'array',
-            required: true,
-            message: 'Please select at least one activity type',
-            trigger: 'change',
-        },
-    ],
-    resource: [
-        {
-            required: true,
-            message: 'Please select activity resource',
-            trigger: 'change',
-        },
-    ],
-    desc: [
-        {
-            required: true,
-            message: 'Please input activity form',
-            trigger: 'blur',
+            message: '请输入耗材数量',
+            trigger: 'input',
         },
     ],
 })
 
-const submitForm = (formEl) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-        if (valid) {
-            console.log('submit!')
-        } else {
-            console.log('error submit!')
-            return false
-        }
-    })
-}
-
-const resetForm = (formEl) => {
-    if (!formEl) return
-    formEl.resetFields()
+const resetForm = (formName) => {
+    if (!formName) return
+    formName.resetFields()
 }
 </script>
 <style scoped>
+:deep().el-form-item__content {
+    display: grid;
+    grid-template-columns: auto 15% auto;
+}
+:deep().el-tag {
+    height: 40px;
+    margin-left: 20px;
+}
 .apply {
     margin: 25px;
 }
