@@ -3,9 +3,9 @@
         <v-dashboard-header />
         <div class="dashboard-content">
             <div class="dashboard-content-left">
-                <h4>耗材选择</h4>
+                <h4>常用耗材选择</h4>
                 <div class="dashboard-consumables-list">
-                    <ul v-for="(item,index) in listData" :key="index" class="list-ul">
+                    <ul v-for="(item, index) in listData" :key="index" class="list-ul">
                         <li class="dashboard-consumables-list-detail">
                             <div class="list-detail-icon">
                                 <i :class="item.icon"></i>
@@ -57,9 +57,9 @@
                     </router-link>
                     <router-link to="/feedback" class="link-info">
                         <el-icon>
-                            <warning />
+                            <sold-out />
                         </el-icon>
-                        <span class="link-text">我的反馈</span>
+                        <span class="link-text">申请未在库耗材</span>
                     </router-link>
                 </div>
             </div>
@@ -67,7 +67,7 @@
     </div>
 </template>
 <script setup>
-import { Star, DocumentChecked, Warning, Search } from '@element-plus/icons-vue';
+import { Star, DocumentChecked, SoldOut, Search } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import VDashboardHeader from '../components/DashboardHeader.vue';
 const listData = [
@@ -113,13 +113,13 @@ const listData = [
         event: "28a ",
         linkevent: "www.baidu.com"
     },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
+    // {
+    //     icon: "fas fa-cubes",
+    //     name: "查看全部耗材",
+    //     linkname: "http://www.baidu.com",
+    //     // event: "28a ",
+    //     linkevent: "www.baidu.com"
+    // },
 ]
 </script>
 <style scoped>

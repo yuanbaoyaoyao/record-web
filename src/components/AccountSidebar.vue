@@ -32,6 +32,12 @@
                     </el-menu-item>
                     <hr />
                     <span class="sidebar-title">订单中心</span>
+                    <el-menu-item index="/apply" route="/apply">
+                        <el-icon>
+                            <document-add />
+                        </el-icon>
+                        <span>申请耗材</span>
+                    </el-menu-item>
                     <el-menu-item index="/orders" route="/orders">
                         <el-icon>
                             <document-copy />
@@ -73,7 +79,7 @@
 </template>
 <script setup>
 import {
-    User, House, Collection, Warning, DocumentCopy, CircleCheck, SoldOut, Bell, Key
+    User, House, Collection, Warning, DocumentCopy, CircleCheck, SoldOut, Bell, Key, DocumentAdd
 } from '@element-plus/icons-vue'
 import { computed } from '@vue/reactivity';
 import { useRoute } from 'vue-router';

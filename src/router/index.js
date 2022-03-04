@@ -46,14 +46,24 @@ export const constantRoutes = [
             title: '商品详情页'
         },
         component: () => import("../views/ProductDetail.vue")
-    }, {
+    },
+    {
         path: "/cart",
         name: "Cart",
         meta: {
             title: '购物车'
         },
         component: () => import("../views/Cart.vue")
-    }, {
+    },
+    // {
+    //     path: "/apply",
+    //     name: "Apply",
+    //     meta: {
+    //         title: '申请为在库耗材'
+    //     },
+    //     component: () => import("../views/Apply.vue")
+    // },
+    {
         path: "/confirmOrder",
         name: "ConfirmOrder",
         meta: {
@@ -96,6 +106,13 @@ export const constantRoutes = [
                     title: '我的反馈'
                 },
                 component: () => import('../views/user/Feedback.vue')
+            }, {
+                path: '/apply',
+                name: 'Apply',
+                meta: {
+                    title: '申请耗材'
+                },
+                component: () => import('../views/order/Apply.vue')
             }, {
                 path: '/orders',
                 name: 'Orders',
