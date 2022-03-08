@@ -5,7 +5,8 @@ import router, { resetRouter } from '@/router'
 
 const user = {
     state: {
-        user: '',
+        userId:'',
+        // user: '',
         token: getToken(),
         name: '',
         avatar: '',
@@ -14,6 +15,9 @@ const user = {
     },
 
     mutations: {
+        SET_USERID: (state, userId) => {
+            state.userId = userId
+        },
         SET_TOKEN: (state, token) => {
             state.token = token
         },
@@ -39,7 +43,11 @@ const user = {
                 loginByUsername(username, userInfo.password, userInfo.code).then(response => {
                     console.log(response)
                     const token = response.data.token
+                    const userId = response.data.userInfo.userId
                     commit('SET_TOKEN', token)
+                    commit('SET_USERID', userId)
+                    commit('SET_NAME',username)
+                    console.log("username",username)
                     setToken(token)
                     resolve()
                 }).catch(error => {
@@ -59,7 +67,7 @@ const user = {
                     } else {
                         reject('getInfo: perms must be a non-null array !')
                     }
-                    commit('SET_ROLES', data.roles)
+                    // commit('SET_ROLES', data.roles)
                     commit('SET_NAME', data.name)
                     commit('SET_AVATAR', data.avatar)
                     resolve(response)

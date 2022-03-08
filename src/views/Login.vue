@@ -68,6 +68,8 @@ const handleLogin = () => {
             loading.value = false
             router.push({ path: '/' })
             console.log("push to /")
+            console.log("store.getters.userId", store.getters.userId)
+            
         }).catch(res => {
             console.log("catch", res)
             loading.value = false

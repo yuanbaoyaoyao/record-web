@@ -12,15 +12,15 @@
                 label-width="120px"
                 class="demo-ruleForm"
             >
-                <el-form-item label="耗材类别" prop="type">
+                <el-form-item label="耗材类别" prop="productTitle">
                     <el-autocomplete
-                        v-model="ruleForm.type"
+                        v-model="ruleForm.productTitle"
                         value-key="title"
                         :fetch-suggestions="querySearchProduct"
                         :trigger-on-focus="true"
                         class="inline-input"
                         placeholder="请输入耗材类别"
-                        @select="handleSelect(ruleForm.type)"
+                        @select="handleSelect(ruleForm.productTitle)"
                     />
                     <template v-if="typeTagVisible">
                         <el-tag class="ml-2" type="success">在库耗材类型</el-tag>
@@ -30,9 +30,9 @@
                     </template>
                 </el-form-item>
 
-                <el-form-item label="耗材型号" prop="model">
+                <el-form-item label="耗材型号" prop="productSkusTitle">
                     <el-autocomplete
-                        v-model="ruleForm.model"
+                        v-model="ruleForm.productSkusTitle"
                         value-key="title"
                         :fetch-suggestions="querySearchProductSkus"
                         :trigger-on-focus="true"
@@ -47,11 +47,22 @@
                     </template>
                 </el-form-item>
 
-                <el-form-item label="耗材数量" prop="number">
-                    <el-input v-model="ruleForm.number" placeholder="请输入数量"></el-input>
+                <el-form-item label="耗材数量" prop="productNumber">
+                    <el-input v-model="ruleForm.productNumber" placeholder="请输入数量"></el-input>
                     <template v-if="modelTagVisible && typeTagVisible">
                         <el-tag class="ml-2" type="success">总数量为88</el-tag>
                     </template>
+                </el-form-item>
+
+                <el-form-item label="选择地址" prop="userAddressId">
+                    <el-select v-model="ruleForm.userAddressId" placeholder="选择地址">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.id"
+                            :label="item.addressDetail"
+                            :value="item.id"
+                        ></el-option>
+                    </el-select>
                 </el-form-item>
 
                 <el-form-item label="图片">
@@ -69,8 +80,8 @@
                     </el-upload>
                 </el-form-item>
 
-                <el-form-item label="耗材描述" prop="desc">
-                    <el-input v-model="ruleForm.desc" type="textarea"></el-input>
+                <el-form-item label="订单描述" prop="orderRemarks">
+                    <el-input v-model="ruleForm.orderRemarks" type="textarea"></el-input>
                 </el-form-item>
 
                 <el-form-item class="button">
@@ -84,12 +95,31 @@
     </div>
 </template>
 <script  setup>
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons'
 import router from '../../router';
 import { listProductAPI } from '../../api/product';
 import { listProductSkusAPI } from '../../api/product-skus'
+// import { createUserOrderAPI } from '../../api/product-apply'
+import { createUserOrderAPI } from '../../api/user-order'
+import { listUserAddressAPI } from '../../api/user-address'
+import store from '../../store';
+
+const options = ref([])
+const defaultFormTemp = reactive({
+    userId: '',
+})
+const defaultForm = ref(Object.assign({}, defaultFormTemp));
+
+const getAddress = () => {
+    defaultForm.value.userId = store.getters.userId
+    console.log("defaultForm.value.userId", defaultForm.value.userId)
+    listUserAddressAPI(defaultForm.value).then(res => {
+        options.value = res.data
+        console.log("options.value", options.value)
+    }).catch()
+}
 
 const querySearchProduct = (queryString, cb) => {
     let lists = []
@@ -105,7 +135,7 @@ const querySearchProduct = (queryString, cb) => {
 
 const querySearchProductSkus = (queryString, cb) => {
     let lists = []
-    querySearchList.value.keyword1 = ruleForm.type
+    querySearchList.value.keyword1 = ruleForm.productTitle
     listProductSkusAPI(querySearchList.value).then(res => {
         for (let i = 0; i < res.data.records.length; i++) {
             lists[i] = res.data.records[i]
@@ -141,16 +171,25 @@ const open = (formName) => {
     formName.validate((valid) => {
         console.log('2')
         if (valid) {
-        console.log('3')
+            console.log('3')
 
             ElMessageBox.confirm(
                 '是否确认提交申请单',
                 {
                     confirmButtonText: '确定',
+
                     cancelButtonText: '取消',
                     type: 'warning',
-                }
+                },
+
             ).then(() => {
+                createUserOrderAPI(ruleForm).then(res => {
+                    console.log("创建成功")
+                    console.log("ruleForm", ruleForm)
+                }).catch(ElMessage({
+                    type: 'error',
+                    message: '提交失败',
+                }))
                 ElMessage({
                     type: 'success',
                     message: '提交成功',
@@ -168,6 +207,7 @@ const open = (formName) => {
                         type: 'success',
                         message: '继续填写申请单',
                     })
+
                 })
                     .catch(() => {
                         router.push('/orders')
@@ -210,31 +250,28 @@ const querySearchList = ref({
     keyword2: null
 })
 
-const ruleFormRef = ref({})
+const ruleFormRef = ref()
 
 const ruleForm = reactive({
-    type: '',
-    model: '',
-    number: '',
-    desc: '',
+    userId: '',
+    userAddressId: '',
+    productTitle: '',
+    productSkusTitle: '',
+    productNumber: '',
+    orderRemarks: ''
 })
+const init = () => {
+    ruleForm.userId = store.getters.userId
+}
+init()
 
 const validateType = (rule, value, callback) => {
-    console.log("调用validateType")
     if (value === '') {
         callback(new Error('请输入耗材类型'))
     }
     callback()
-    // else {
-    //     if (ruleForm.checkPass !== '') {
-    //         if (!ruleFormRef.value) return
-    //         ruleFormRef.value.validateField('checkPass', () => null)
-    //     }
-    //     callback()
-    // }
 }
 const validateModel = (rule, value, callback) => {
-    console.log("调用validateModel")
     if (value === '') {
         callback(new Error('请输入耗材型号'))
     }
@@ -242,9 +279,9 @@ const validateModel = (rule, value, callback) => {
 }
 
 const rules = reactive({
-    type: [{ required: true, validator: validateType, trigger: 'input' }],
-    model: [{ required: true, validator: validateModel, trigger: 'input' }],
-    number: [
+    productTitle: [{ required: true, validator: validateType, trigger: 'input' }],
+    productSkusTitle: [{ required: true, validator: validateModel, trigger: 'input' }],
+    productNumber: [
         {
             required: true,
             message: '请输入耗材数量',
@@ -257,6 +294,7 @@ const resetForm = (formName) => {
     if (!formName) return
     formName.resetFields()
 }
+getAddress()
 </script>
 <style scoped>
 :deep().el-form-item__content {

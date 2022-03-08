@@ -12,15 +12,16 @@
                     type="primary"
                     @click="dialogFormVisible = true"
                 >添加新地址</el-button>
-                <el-card v-for="i in 5" :key="i" class="box-card">
+                <el-card v-for="i in tableData" :key="i" class="box-card">
                     <template #header>
                         <div class="card-header">
-                            <span>元宝</span>
+                            <span>{{ i.name }}</span>
                         </div>
                     </template>
-                    <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
+                    <div class="text item">电话号码: {{ i.phone }}</div>
+                    <div class="text item">地址详情: {{ i.addressDetail }}</div>
                     <div class="button">
-                        <el-button class="button-detail" type="text">修改</el-button>
+                        <el-button class="button-detail" type="text" @click="handleUpdate(i)">修改</el-button>
                         <el-button class="button-detail" type="text">删除</el-button>
                     </div>
                 </el-card>
@@ -28,30 +29,35 @@
         </div>
     </div>
 
-    <el-dialog v-model="dialogFormVisible" title="添加收货地址">
-        <el-form :model="form">
+    <el-dialog v-model="dialogFormVisible" :title="textMap[dialogStatus]">
+        <el-form :model="defaultForm">
             <el-form-item label="姓名" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off"></el-input>
+                <el-input v-model="defaultForm.name" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="手机号" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off"></el-input>
+                <el-input v-model="defaultForm.phone" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="地址选择" :label-width="formLabelWidth">
                 <div class="block">
-                    <el-cascader placeholder="Try searchingL Guide" :options="options" filterable />
+                    <el-cascader placeholder="请选择地址" :options="options" filterable disabled />
                 </div>
             </el-form-item>
             <el-form-item label="详细地址" :label-width="formLabelWidth">
-                <el-input v-model="textarea" :rows="2" type="textarea" placeholder="Please input" />
+                <el-input
+                    v-model="defaultForm.addressDetail"
+                    :rows="2"
+                    type="textarea"
+                    placeholder="请填写详细地址"
+                />
             </el-form-item>
             <el-form-item label="地址标签" :label-width="formLabelWidth">
-                <el-input v-model="form.name" :rows="2" placeholder="Please input" />
+                <el-input v-model="defaultForm.tag" :rows="2" placeholder="请填写地址标签" disabled />
             </el-form-item>
         </el-form>
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确定</el-button>
+                <el-button type="primary" @click="updateData">确定</el-button>
             </span>
         </template>
     </el-dialog>
@@ -59,6 +65,8 @@
 <script setup>
 import { CirclePlusFilled } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
+import store from '../../store';
+import { listUserAddressAPI, updateUserAddressAPI, deleteUserAddressAPI } from '../../api/user-address'
 
 const dialogTableVisible = ref(false)
 const dialogFormVisible = ref(false)
@@ -67,17 +75,59 @@ const textarea = ref('')
 const props = {
     multiple: true,
 }
+const username = store.getters.name
+const tableData = ref([])
+// const defaultList = ref({
+//     userId: ''
+// })
+const dialogStatus = ref('')
 
-const form = reactive({
+
+const getList = () => {
+    // defaultList.value.userId = store.getters.userId
+    defaultForm.value.userId = store.getters.userId
+    
+    listUserAddressAPI(defaultForm.value).then(res => {
+        tableData.value = res.data
+    }).catch()
+}
+
+
+const handleUpdate = (i) => {
+    console.log(i)
+    dialogStatus.value = "update"
+    dialogFormVisible.value = true
+    defaultForm.value = i
+}
+
+const updateData = () => {
+
+    updateUserAddressAPI(defaultForm.value).then(res => {
+        getList()
+    }).catch(
+        console.log("false")
+    )
+    dialogFormVisible.value = false
+    dialogStatus == ''
+}
+
+const defaultFormTemp = reactive({
+    userId:'',
     name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: '',
+    phone: '',
+    // addressSelect:'',
+    addressDetail: '',
+    // tag:[],
 })
+
+const textMap = {
+    update: '编辑收货地址',
+    create: '创建收货地址'
+}
+
+
+const defaultForm = ref(Object.assign({}, defaultFormTemp));
+
 
 const options = [
     {
@@ -347,20 +397,24 @@ const options = [
         ],
     },
 ]
+getList()
 </script>
 <style scoped>
+hr {
+    width: 1004px;
+}
 .button {
     display: flex;
     justify-content: flex-end;
     margin-right: 5px;
 }
 
-.button>:deep().el-button {
+.button > :deep().el-button {
     transition-property: opacity;
     transition-duration: 1s;
     opacity: 0;
 }
-.el-space__item:hover .button>:deep().el-button {
+.el-space__item:hover .button > :deep().el-button {
     transition-property: opacity;
     transition-duration: 1s;
     opacity: 1;

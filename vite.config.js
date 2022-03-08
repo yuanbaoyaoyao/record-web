@@ -55,6 +55,11 @@ export default defineConfig(({
           changeOrgin: true,
           rewrite: (path) => path.replace(/^\/shiroIp/, '')
         },
+        "/clientIp": {
+          target: "http://localhost:8083",
+          changeOrgin: true,
+          rewrite: (path) => path.replace(/^\/clientIp/, '')
+        },
       }
     }
   })
