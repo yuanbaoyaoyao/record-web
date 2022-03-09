@@ -13,6 +13,6 @@ export function loginByUsername(username, password, code) {
 export function logout() {
     return http.post(`${resquest}` + `client/logout`)
 }
-// export function getUserInfo(token) {
-//     return http.get(`${resquest}` + `info`, token)
-// }
+export function getUserInfo(token) {
+    return http.get(`${resquest}` + `client/info`, token)
+}

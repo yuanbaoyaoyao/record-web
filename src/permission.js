@@ -25,33 +25,36 @@ router.beforeEach((to, from, next) => {
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     }
      else {
-         next()
-    //   if (store.getters.perms.length === 0) { // 判断当前用户是否已拉取完user_info信息
-    //     store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-    //       const perms = res.data.perms // note: perms must be a array! such as: ['GET /aaa','POST /bbb']
-    //       store.dispatch('GenerateRoutes', { perms }).then(() => { // 根据perms权限生成可访问的路由表
-    //         for (let i = 0; i < store.getters.addRoutes.length; i++) {
-    //           router.addRoute(store.getters.addRoutes[i])
-    //         }
+       console.log("判断是否已拉取完user_info信息")
+       console.log("store.getters.userId",store.getters.userId)
+      if (store.getters.userId === '') { // 判断当前用户是否已拉取完user_info信息
+       console.log("判断是否已拉取完user_info信息2")
+        store.dispatch('GetUserInfo').then(res => { // 拉取user_info
+          // const perms = res.data.perms // note: perms must be a array! such as: ['GET /aaa','POST /bbb']
+          // store.dispatch('GenerateRoutes', { perms }).then(() => { // 根据perms权限生成可访问的路由表
+          //   for (let i = 0; i < store.getters.addRoutes.length; i++) {
+          //     router.addRoute(store.getters.addRoutes[i])
+          //   }
 
-    //         next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-    //       })
-    //     }).catch((err) => {
-    //       store.dispatch('FedLogOut').then(() => {
-    //         ElMessage.error(err || 'Verification failed, please login again')
-    //         next({ path: '/' })
-    //       })
-    //     })
-    //   } else {
-    //     // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
-    //     // if (hasPermission(store.getters.perms, to.meta.perms)) {
-    //       next()
-    //     // }
-    //     // else {
-    //     //   next({ path: '/401', replace: true, query: { noGoBack: true } })
-    //     // }
-    //     // 可删 ↑
-    //   }
+          //   next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+          // })
+          next()
+        }).catch((err) => {
+          store.dispatch('FedLogOut').then(() => {
+            ElMessage.error(err || 'Verification failed, please login again')
+            next({ path: '/' })
+          })
+        })
+      } else {
+        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
+        // if (hasPermission(store.getters.perms, to.meta.perms)) {
+          next()
+        // }
+        // else {
+        //   next({ path: '/401', replace: true, query: { noGoBack: true } })
+        // }
+        // 可删 ↑
+      }
     }
   }
   else {

@@ -92,7 +92,6 @@ const getList = () => {
     }).catch()
 }
 
-
 const handleUpdate = (i) => {
     console.log(i)
     dialogStatus.value = "update"
@@ -408,7 +407,6 @@ hr {
     justify-content: flex-end;
     margin-right: 5px;
 }
-
 .button > :deep().el-button {
     transition-property: opacity;
     transition-duration: 1s;

@@ -1,11 +1,11 @@
 
-import { loginByUsername, logout} from '@/api/login'
+import { loginByUsername, logout, getUserInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const user = {
     state: {
-        userId:'',
+        userId: '',
         // user: '',
         token: getToken(),
         name: '',
@@ -46,8 +46,8 @@ const user = {
                     const userId = response.data.userInfo.userId
                     commit('SET_TOKEN', token)
                     commit('SET_USERID', userId)
-                    commit('SET_NAME',username)
-                    console.log("username",username)
+                    commit('SET_NAME', username)
+                    console.log("username", username)
                     setToken(token)
                     resolve()
                 }).catch(error => {
@@ -60,15 +60,17 @@ const user = {
         GetUserInfo({ commit, state }) {
             return new Promise((resolve, reject) => {
                 getUserInfo(state.token).then(response => {
+                    console.log("调用getUserInfo")
                     const data = response.data
-
-                    if (data.perms && data.perms.length > 0) { // 验证返回的perms是否是一个非空数组
-                        commit('SET_PERMS', data.perms)
-                    } else {
-                        reject('getInfo: perms must be a non-null array !')
-                    }
+                    console.log("data:",data)
+                    // if (data.perms && data.perms.length > 0) { // 验证返回的perms是否是一个非空数组
+                    //     commit('SET_PERMS', data.perms)
+                    // } else {
+                    //     reject('getInfo: perms must be a non-null array !')
+                    // }
                     // commit('SET_ROLES', data.roles)
                     commit('SET_NAME', data.name)
+                    commit('SET_USERID', data.id)
                     commit('SET_AVATAR', data.avatar)
                     resolve(response)
                 }).catch(error => {
