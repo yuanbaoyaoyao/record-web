@@ -102,7 +102,7 @@ import router from '../../router';
 import { listProductAPI } from '../../api/product';
 import { listProductSkusAPI } from '../../api/product-skus'
 // import { createUserOrderAPI } from '../../api/product-apply'
-import { createUserOrderAPI } from '../../api/user-order'
+import { createUserOrderAPI,updateUserOrderAPI } from '../../api/user-order'
 import { listUserAddressAPI } from '../../api/user-address'
 import store from '../../store';
 
@@ -225,7 +225,6 @@ const open = (formName) => {
             return false
         }
     })
-
 }
 
 const imageUrl = ref('')

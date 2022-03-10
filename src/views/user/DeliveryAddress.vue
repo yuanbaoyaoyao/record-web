@@ -15,10 +15,12 @@
                 <el-card v-for="i in tableData" :key="i" class="box-card">
                     <template #header>
                         <div class="card-header">
-                            <span>{{ i.name }}</span>
+                            <span>{{ i.receiver }}</span>
                         </div>
                     </template>
-                    <div class="text item">电话号码: {{ i.phone }}</div>
+                    <div class="text item">领用人: {{ i.receiver }}</div>
+                    <div class="text item">使用人: {{ i.user }}</div>
+                    <div class="text item">领用人电话号码: {{ i.phone }}</div>
                     <div class="text item">地址详情: {{ i.addressDetail }}</div>
                     <div class="button">
                         <el-button class="button-detail" type="text" @click="handleUpdate(i)">修改</el-button>
@@ -31,10 +33,13 @@
 
     <el-dialog v-model="dialogFormVisible" :title="textMap[dialogStatus]">
         <el-form :model="defaultForm">
-            <el-form-item label="姓名" :label-width="formLabelWidth">
-                <el-input v-model="defaultForm.name" autocomplete="off"></el-input>
+            <el-form-item label="领用人" :label-width="formLabelWidth">
+                <el-input v-model="defaultForm.receiver" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="手机号" :label-width="formLabelWidth">
+            <el-form-item label="使用人" :label-width="formLabelWidth">
+                <el-input v-model="defaultForm.user" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="领用人电话号码" :label-width="formLabelWidth">
                 <el-input v-model="defaultForm.phone" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="地址选择" :label-width="formLabelWidth">
@@ -75,6 +80,7 @@ const textarea = ref('')
 const props = {
     multiple: true,
 }
+
 const username = store.getters.name
 const tableData = ref([])
 // const defaultList = ref({
@@ -82,13 +88,13 @@ const tableData = ref([])
 // })
 const dialogStatus = ref('')
 
-
 const getList = () => {
     // defaultList.value.userId = store.getters.userId
     defaultForm.value.userId = store.getters.userId
-    
+
     listUserAddressAPI(defaultForm.value).then(res => {
         tableData.value = res.data
+        console.log("tableData", tableData.value)
     }).catch()
 }
 
@@ -111,8 +117,9 @@ const updateData = () => {
 }
 
 const defaultFormTemp = reactive({
-    userId:'',
-    name: '',
+    userId: '',
+    receiver: '',
+    user: '',
     phone: '',
     // addressSelect:'',
     addressDetail: '',
@@ -124,9 +131,7 @@ const textMap = {
     create: '创建收货地址'
 }
 
-
 const defaultForm = ref(Object.assign({}, defaultFormTemp));
-
 
 const options = [
     {

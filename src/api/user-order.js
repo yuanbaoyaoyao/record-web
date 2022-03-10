@@ -11,6 +11,6 @@ export function createUserOrderAPI(params){
 export function deleteUserOrderAPI(params){
     return http.delete(`${resquest}`+`delete`,params)
 }
-// export function updateProductSkusAPI(params){
-//     return http.post(`${resquest}`+`update`,params)
-// }
+export function updateUserOrderAPI(params){
+    return http.put(`${resquest}`+`update`,params)
+}

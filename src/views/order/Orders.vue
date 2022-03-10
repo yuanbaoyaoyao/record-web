@@ -8,16 +8,16 @@
             <div>
                 <ul class="order-select-detail">
                     <li>
-                        <a href="http://www.baidu.com">全部订单</a>
+                        <el-button type="text" @click="getListAll()">全部订单</el-button>
                     </li>
                     <!-- <li>
                         <a href="http://www.baidu.com">待支付</a>
                     </li>-->
                     <li>
-                        <a href="http://www.baidu.com">待收货</a>
+                        <el-button type="text" @click="getListToBeReceived()">待收货</el-button>
                     </li>
                     <li>
-                        <a href="http://www.baidu.com">待评价</a>
+                        <el-button type="text" @click="getListToBeEvaluated()">待评价</el-button>
                     </li>
                 </ul>
             </div>
@@ -38,7 +38,7 @@
     </div>
 
     <el-dialog v-model="dialogFormVisible" title="查看订单详情">
-        <el-descriptions class="margin-top" title="With border" :column="3" :size="size" border>
+        <el-descriptions class="margin-top" :column="3" :size="size" border>
             <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
@@ -90,7 +90,29 @@
                 {{ tableDetail.orderSn }}
             </el-descriptions-item>
         </el-descriptions>
-        <el-descriptions class="margin-top" :column="1" :size="size" border>
+        <el-descriptions class="margin-top" :column="3" :size="size" border>
+            <el-descriptions-item>
+                <template #label>
+                    <div class="cell-item">
+                        <el-icon :style="iconStyle">
+                            <office-building />
+                        </el-icon>申请人
+                    </div>
+                </template>
+                {{ tableDetail.receiver }}
+            </el-descriptions-item>
+            <el-descriptions-item>
+                <template #label>
+                    <div class="cell-item">
+                        <el-icon :style="iconStyle">
+                            <office-building />
+                        </el-icon>使用人
+                    </div>
+                </template>
+                {{ tableDetail.user }}
+            </el-descriptions-item>
+        </el-descriptions>
+        <el-descriptions class="margin-top" :column="3" :size="size" border>
             <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
@@ -103,7 +125,7 @@
             </el-descriptions-item>
         </el-descriptions>
 
-        <el-descriptions class="margin-top" :column="1" :size="size" border>
+        <el-descriptions class="margin-top" :column="3" :size="size" border>
             <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
@@ -118,16 +140,25 @@
 
         <template #footer>
             <span class="dialog-footer">
-                <el-button type="danger" @click="dialogFormVisible = false">取消订单</el-button>
-                <el-button type="primary" @click="updateData()">确定</el-button>
+                <template v-if="tableDetail && tableDetail.orderStatus == '审核中'">
+                    <el-button type="danger" @click="updateDataCancel(tableDetail)">取消订单</el-button>
+                </template>
+                <el-button type="info" @click="dialogFormVisible = false">取消</el-button>
+                <template v-if="tableDetail && tableDetail.orderStatus == '已到货'">
+                    <el-button type="primary" @click="updateDataReceive(tableDetail)">确认收货</el-button>
+                </template>
+                <template v-if="tableDetail && tableDetail.orderStatus == '已收货'">
+                    <el-button type="primary" @click="updateDataEvaluate(tableDetail)">评价订单</el-button>
+                </template>
             </span>
         </template>
     </el-dialog>
 </template>
 <script setup>
 import { ref, computed, reactive } from 'vue'
-import { listUserOrderAPI } from '../../api/user-order'
+import { listUserOrderAPI, updateUserOrderAPI } from '../../api/user-order'
 import store from '../../store';
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
     User,
     Iphone,
@@ -161,12 +192,16 @@ const blockMargin = computed(() => {
 const formLabelWidth = '120px'
 
 const dialogFormVisible = ref(false)
-const defaultFormTemp = reactive({
+const defaultFormTemp = {
     userId: '',
+    receiver: '',
+    user: '',
     productTitle: '',
     productSkusTitle: '',
-    orderSn: ''
-})
+    productNumber: '',
+    orderSn: '',
+    orderStatus: null,
+}
 const defaultForm = ref(Object.assign({}, defaultFormTemp));
 
 const search = ref('')
@@ -183,27 +218,165 @@ const status = {
 const changeStatus = (i, index) => {
     tableData.value[index].orderStatus = status[i]
 }
+
+const getList = () => {
+    defaultForm.value.userId = store.getters.userId
+    listUserOrderAPI(defaultForm.value).then(res => {
+        tableData.value = res.data.records
+        for (let i = 0; i < tableData.value.length; i++) {
+            changeStatus(tableData.value[i].orderStatus, i)
+        }
+    }).catch(console.log("faild to getList"))
+}
+
+const getListAll = () => {
+    defaultForm.value = Object.assign({}, defaultFormTemp)
+    defaultForm.value.userId = store.getters.userId
+    listUserOrderAPI(defaultForm.value).then(res => {
+        tableData.value = res.data.records
+        for (let i = 0; i < tableData.value.length; i++) {
+            changeStatus(tableData.value[i].orderStatus, i)
+        }
+    }).catch(console.log("faild to getListAll"))
+}
+
+const getListToBeReceived = () => {
+    defaultForm.value = Object.assign({}, defaultFormTemp)
+    defaultForm.value.userId = store.getters.userId
+    defaultForm.value.orderStatus = 2
+    listUserOrderAPI(defaultForm.value).then(res => {
+        tableData.value = res.data.records
+        for (let i = 0; i < tableData.value.length; i++) {
+            changeStatus(tableData.value[i].orderStatus, i)
+        }
+    }).catch(console.log("faild to getListToBeReceived"))
+}
+
+const getListToBeEvaluated = () => {
+    defaultForm.value = Object.assign({}, defaultFormTemp)
+    defaultForm.value.userId = store.getters.userId
+    defaultForm.value.orderStatus = 3
+    listUserOrderAPI(defaultForm.value).then(res => {
+        tableData.value = res.data.records
+        for (let i = 0; i < tableData.value.length; i++) {
+            changeStatus(tableData.value[i].orderStatus, i)
+        }
+    }).catch(console.log("faild to getListToBeEvaluated"))
+}
+
 const handleUpdate = (index, row) => {
     console.log("row", row)
     tableDetail.value = row
     dialogFormVisible.value = true
 }
-const updateData = () => {
-    updateUserOrderAPI(defaultForm.value).then(res => {
-        getList()
-    }).catch(console.log("false"))
-    dialogFormVisible.value = false
+// const updateData = () => {
+//     updateUserOrderAPI(defaultForm.value).then(res => {
+//         getList()
+//     }).catch(console.log("false"))
+//     dialogFormVisible.value = false
+// }
+
+const updateDataCancel = (tableDetail) => {
+
+    //添加handleconfirm
+    ElMessageBox.confirm(
+        console.log("tableDetail1", tableDetail),
+        '是否确认取消订单',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        },
+    ).then(() => {
+        let tableDetailTemp = Object.assign({}, tableDetail);
+        defaultForm.value = tableDetailTemp
+        defaultForm.value.orderStatus = -1
+        updateUserOrderAPI(defaultForm.value).then(res => {
+            ElMessage({
+                type: 'success',
+                message: '取消订单成功',
+            })
+            dialogFormVisible.value = false
+            defaultForm.value = Object.assign({}, defaultFormTemp)
+            getList()
+        })
+
+    })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
 }
-const getList = () => {
-    defaultForm.value.userId = store.getters.userId
-    listUserOrderAPI(defaultForm.value).then(res => {
-        tableData.value = res.data.records
-        console.log("tableData.value", tableData.value)
-        for (let i = 0; i < tableData.value.length; i++) {
-            changeStatus(tableData.value[i].orderStatus, i)
-        }
-    }).catch()
+const updateDataReceive = (tableDetail) => {
+
+    //添加handleconfirm
+    ElMessageBox.confirm(
+        console.log("tableDetail1", tableDetail),
+        '是否确认收货',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        },
+    ).then(() => {
+        let tableDetailTemp = Object.assign({}, tableDetail);
+        defaultForm.value = tableDetailTemp
+        defaultForm.value.orderStatus = 3
+        updateUserOrderAPI(defaultForm.value).then(res => {
+            ElMessage({
+                type: 'success',
+                message: '确认收货成功',
+            })
+            dialogFormVisible.value = false
+            defaultForm.value = Object.assign({}, defaultFormTemp)
+            getList()
+        })
+
+    })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
 }
+// const updateDataEvaluate = (tableDetail) => {
+
+//     //添加handleconfirm
+//     ElMessageBox.confirm(
+//         console.log("tableDetail1", tableDetail),
+//         '是否确认取消订单',
+//         {
+//             confirmButtonText: '确定',
+//             cancelButtonText: '取消',
+//             type: 'warning',
+//         },
+//     ).then(() => {
+//         let tableDetailTemp = Object.assign({}, tableDetail);
+//         defaultForm.value = tableDetailTemp
+//         defaultForm.value.orderStatus = 4
+//         updateUserOrderAPI(defaultForm.value).then(res => {
+//             ElMessage({
+//                 type: 'success',
+//                 message: '取消订单成功',
+//             })
+//             dialogFormVisible.value = false
+//             defaultForm.value = Object.assign({}, defaultFormTemp)
+//             getList()
+//         })
+
+//     })
+//         .catch(() => {
+//             ElMessage({
+//                 type: 'info',
+//                 message: '取消操作',
+//             })
+//         })
+// }
+
+
 getList()
 </script>
 <style scoped>
@@ -216,6 +389,9 @@ a {
 a:active {
     color: #409eff;
     text-decoration: none;
+}
+:deep()td.el-descriptions__cell.el-descriptions__label.is-bordered-label.is-left {
+    width: 150px !important;
 }
 
 /* :deep().el-input {
