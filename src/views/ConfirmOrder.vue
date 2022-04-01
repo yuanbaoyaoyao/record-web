@@ -81,8 +81,9 @@
                 <hr />
             </div>
             <div class="confirm-button">
-                <el-button type="info">返回购物车</el-button>
-                <el-button type="primary">提交订单</el-button>
+                <el-button type="danger" @click="handleReturnToCart()">取消订单</el-button>
+                <el-button type="info" @click="handleReturnToCart()">返回购物车</el-button>
+                <el-button type="primary" @click="handleOpenMessage()">提交订单</el-button>
             </div>
         </div>
     </div>
@@ -117,7 +118,9 @@
 <script setup>
 
 import { CirclePlusFilled, Search } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus';
 import { reactive, ref } from 'vue'
+import router from '../router';
 
 const search = ref('')
 const input = ref('')
@@ -479,6 +482,20 @@ const options = [
 const tempAddressArray = ref([]);
 tempAddressArray.value = addressArray.value.slice(0, 4)
 
+const handleOpenMessage = () => {
+    ElMessageBox.alert('订单提交成功', '提示',
+        {
+            confirmButtonText: '确定',
+            type: 'success',
+        }).then(()=>{
+            router.push("/orders")
+        })
+}
+
+const handleReturnToCart = () => {
+    router.push("/cart")
+}
+
 const extendAddress = () => {
     addressVisible.value = !addressVisible.value
     tempAddressArray.value = addressArray.value
@@ -596,9 +613,9 @@ hr {
 .el-button.el-button--info.is-plain {
     margin: 0 30px 10px 30px;
 }
-.confirm-button{
+.confirm-button {
     display: flex;
     justify-content: end;
-    margin:0 30px 10px 0;
+    margin: 0 30px 10px 0;
 }
 </style>

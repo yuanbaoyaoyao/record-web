@@ -4,6 +4,7 @@ import { createStore } from "vuex";
 import permission from "./modules/permission";
 // import tag from "./modules/tag";
 import user from "./modules/user"
+import productDetail from "./modules/productDetail"
 import getters from "./getters"
 
 const store = createStore({
@@ -11,6 +12,7 @@ const store = createStore({
         // app,
         permission,
         // tag,
+        productDetail,
         user
     },
     getters

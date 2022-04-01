@@ -99,8 +99,8 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons'
 import router from '../../router';
-import { listProductAPI } from '../../api/product';
-import { listProductSkusAPI } from '../../api/product-skus'
+import { listProductAllAPI } from '../../api/product';
+import { listProductSkusSearchAPI } from '../../api/product-skus'
 // import { createUserOrderAPI } from '../../api/product-apply'
 import { createUserOrderAPI,updateUserOrderAPI } from '../../api/user-order'
 import { listUserAddressAPI } from '../../api/user-address'
@@ -123,7 +123,7 @@ const getAddress = () => {
 
 const querySearchProduct = (queryString, cb) => {
     let lists = []
-    listProductAPI(querySearchList.value).then(res => {
+    listProductAllAPI(querySearchList.value).then(res => {
 
         for (let i = 0; i < res.data.records.length; i++) {
             lists[i] = res.data.records[i]
@@ -136,7 +136,7 @@ const querySearchProduct = (queryString, cb) => {
 const querySearchProductSkus = (queryString, cb) => {
     let lists = []
     querySearchList.value.keyword1 = ruleForm.productTitle
-    listProductSkusAPI(querySearchList.value).then(res => {
+    listProductSkusSearchAPI(querySearchList.value).then(res => {
         for (let i = 0; i < res.data.records.length; i++) {
             lists[i] = res.data.records[i]
         }

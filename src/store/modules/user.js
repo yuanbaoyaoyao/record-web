@@ -6,12 +6,9 @@ import router, { resetRouter } from '@/router'
 const user = {
     state: {
         userId: '',
-        // user: '',
         token: getToken(),
         name: '',
         avatar: '',
-        // roles: [],
-        // perms: []
     },
 
     mutations: {
@@ -27,12 +24,6 @@ const user = {
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar
         },
-        // SET_ROLES: (state, roles) => {
-        //     state.roles = roles
-        // },
-        // SET_PERMS: (state, perms) => {
-        //     state.perms = perms
-        // }
     },
     actions: {
 

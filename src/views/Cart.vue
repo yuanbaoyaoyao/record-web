@@ -1,96 +1,103 @@
 <template>
-    <div class="cart">
-        <div class="cart-header">
-            <div class="cart-header-title">
-                <div class="cart-header-logo">
-                    <a href="#">
-                        <img
-                            src="../assets/sysLogo.svg"
-                            style="display:block;width:110px;height:auto"
-                        />
-                    </a>
-                </div>
-                <span class="cart-header-detail">购物车</span>
-            </div>
-            <div class="cart-header-search">
-                <div class="cart-header-search-input">
-                    <el-input
-                        v-model="input"
-                        placeholder="Please input"
-                        :prefix-icon="Search"
-                        clearable
-                    />
-                </div>
-                <div class="search-button">
-                    <el-button type="primary">Search</el-button>
-                </div>
-            </div>
+    <div>
+        <div class="layout-header">
+            <v-header />
         </div>
-        <div class="cart-list-title"></div>
-        <div class="cart-list-content">
-            <el-table
-                :data="filterTableData"
-                style="width: 100%"
-                :cell-style="{ 'text-align': 'center' }"
-                :header-cell-style="{ 'text-align': 'center' }"
-                @select="selectChecked"
-                @select-all="selectAllChecked"
-            >
-                <el-table-column type="selection" width="80" />
-                <el-table-column>
-                    <template v-slot="scope">
-                        <el-image style="width: 100px; height: 100px" :src="scope.row.url"></el-image>
-                    </template>
-                </el-table-column>
-                <el-table-column label="商品名称" prop="name" />
-                <el-table-column label="单价" prop="price" />
-                <el-table-column label="数量">
-                    <template v-slot="scope">
-                        <el-input-number
-                            v-model="scope.row.number"
-                            :min="1"
-                            :max="10"
-                            @change="handleChange"
+        <div class="cart">
+            <div class="cart-header">
+                <div class="cart-header-title">
+                    <div class="cart-header-logo">
+                        <a href="#">
+                            <img
+                                src="../assets/sysLogo.svg"
+                                style="display:block;width:110px;height:auto"
+                            />
+                        </a>
+                    </div>
+                    <span class="cart-header-detail">购物车</span>
+                </div>
+                <div class="cart-header-search">
+                    <div class="cart-header-search-input">
+                        <el-input
+                            v-model="input"
+                            placeholder="Please input"
+                            :prefix-icon="Search"
+                            clearable
                         />
-                    </template>
-                </el-table-column>
-                <el-table-column label="小计">
-                    <template
-                        v-slot="scope"
-                    >{{ scope.row.subtotal = scope.row.price * scope.row.number }}</template>
-                </el-table-column>
-                <el-table-column label="操作" align="right">
-                    <template #default="scope">
-                        <el-button
-                            size="small"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)"
-                        >Delete</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </div>
-        <div class="cart-list-bottom">
-            <div class="cart-list-bottom-detail">
-                <div class="cart-select-count">已选择{{ numberCount }}件耗材</div>
-                <div class="cart-money-count">合计:{{ moneyCount }}元</div>
+                    </div>
+                    <div class="search-button">
+                        <el-button type="primary">Search</el-button>
+                    </div>
+                </div>
             </div>
-            <!-- <div class="cart-settlement">底部结算</div> -->
-            <div>
-                <template v-if="selectionLength == 0">
-                    <el-button type="info" @click="openMessage">结算</el-button>
-                </template>
-                <template v-else>
-                    <el-button type="primary">结算</el-button>
-                </template>
+            <div class="cart-list-title"></div>
+            <div class="cart-list-content">
+                <el-table
+                    :data="filterTableData"
+                    style="width: 100%"
+                    :cell-style="{ 'text-align': 'center' }"
+                    :header-cell-style="{ 'text-align': 'center' }"
+                    @select="selectChecked"
+                    @select-all="selectAllChecked"
+                >
+                    <el-table-column type="selection" width="80" />
+                    <el-table-column>
+                        <template v-slot="scope">
+                            <el-image style="width: 100px; height: 100px" :src="scope.row.url"></el-image>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="商品名称" prop="name" />
+                    <el-table-column label="单价" prop="price" />
+                    <el-table-column label="数量">
+                        <template v-slot="scope">
+                            <el-input-number
+                                v-model="scope.row.number"
+                                :min="1"
+                                :max="10"
+                                @change="handleChange"
+                            />
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="小计">
+                        <template
+                            v-slot="scope"
+                        >{{ scope.row.subtotal = scope.row.price * scope.row.number }}</template>
+                    </el-table-column>
+                    <el-table-column label="操作" align="right">
+                        <template #default="scope">
+                            <el-button
+                                size="small"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)"
+                            >Delete</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div class="cart-list-bottom">
+                <div class="cart-list-bottom-detail">
+                    <div class="cart-select-count">已选择{{ numberCount }}件耗材</div>
+                    <div class="cart-money-count">合计:{{ moneyCount }}元</div>
+                </div>
+                <!-- <div class="cart-settlement">底部结算</div> -->
+                <div>
+                    <template v-if="selectionLength == 0">
+                        <el-button type="info" @click="openMessage">结算</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button type="primary" @click="handleSettlement()">结算</el-button>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script setup>
-import { ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import vHeader from "../components/Header.vue"
+import router from '../router';
 
 const search = ref('')
 const input = ref('')
@@ -143,6 +150,10 @@ const numberCount = ref(0)
 const moneyCount = ref(0)
 const selectionLength = ref(0)
 
+const handleSettlement=()=>{
+    router.push("/confirmOrder")
+}
+
 const selectChecked = (selection) => {
     let temp = 0, tempMoneyCount = 0
     for (let element of selection) {
@@ -170,6 +181,9 @@ const openMessage = () => {
 }
 </script>
 <style scoped>
+.layout-header {
+    margin-bottom: 30px;
+}
 .cart {
     display: flex;
     flex-direction: column;
@@ -223,7 +237,8 @@ const openMessage = () => {
     flex-direction: row;
     justify-content: space-between;
 }
-.cart-select-count,.cart-money-count{
+.cart-select-count,
+.cart-money-count {
     margin: 20px;
 }
 .el-button.el-button--info,

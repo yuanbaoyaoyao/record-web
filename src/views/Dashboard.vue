@@ -4,27 +4,17 @@
         <div class="dashboard-content">
             <div class="dashboard-content-left">
                 <h4>常用耗材选择</h4>
-                <div class="dashboard-consumables-list">
-                    <ul v-for="(item, index) in listData" :key="index" class="list-ul">
-                        <li class="dashboard-consumables-list-detail">
-                            <div class="list-detail-icon">
-                                <i :class="item.icon"></i>
-                            </div>
-                            <div class="list-detail-text">
-                                <a :href="item.linkname" target="_blank">{{ item.name }}</a>
-                                <span>/</span>
-                                <a :href="item.linkevent" target="_blank">{{ item.event }}</a>
-                                <span>/</span>
-                                <a :href="item.linkevent" target="_blank">{{ item.event }}</a>
-                            </div>
-                        </li>
-                    </ul>
+                <div class="common-consumables">
+                    <el-row v-for="(item, index) in listProductData.slice(0,6)" :key="index">
+                        <el-col>{{ item }}</el-col>
+                    </el-row>
                 </div>
+                <el-button size="small" @click="linkToProductSkus()">查看所有在库耗材</el-button>
             </div>
             <div class="dashboard-content-center">
                 <el-carousel>
-                    <el-carousel-item v-for="item in 4" :key="item">
-                        <h3>{{ item }}</h3>
+                    <el-carousel-item v-for="(item, index) in listProductSkusData" :key="index">
+                        <el-image :src="listProductSkusData.avatar" />
                     </el-carousel-item>
                 </el-carousel>
             </div>
@@ -67,62 +57,49 @@
     </div>
 </template>
 <script setup>
-import { Star, DocumentChecked, SoldOut, Search } from '@element-plus/icons-vue';
-import { ref } from 'vue';
-import VDashboardHeader from '../components/DashboardHeader.vue';
-const listData = [
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    // {
-    //     icon: "fas fa-cubes",
-    //     name: "查看全部耗材",
-    //     linkname: "http://www.baidu.com",
-    //     // event: "28a ",
-    //     linkevent: "www.baidu.com"
-    // },
-]
+import { Star, DocumentChecked, SoldOut, Search, ShoppingBag } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import VDashboardHeader from '../components/DashboardHeader.vue'
+import { listProductAllAPI } from '../api/product'
+import { listProductSkusSearchAPI, listProductSkusLimitAPI } from '../api/product-skus'
+import router from '../router'
+const listProductData = ref([{}])
+const listProductSkusData = ref()
+
+const getProductInfo = () => {
+    listProductAllAPI().then(res => {
+        for (let i = 0; i < res.data.length;) {
+            listProductData.value[i] = res.data[i++].title
+        }
+    })
+}
+const getProductSkusInfo = () => {
+    listProductSkusLimitAPI().then(res => {
+        listProductSkusData.value = res.data
+    })
+}
+const linkToProductSkus = ()=>{
+    router.push("/products")
+}
+getProductInfo()
+getProductSkusInfo()
 </script>
 <style scoped>
+.el-col-24 {
+    margin: 6px;
+    border: 1px solid #dcdfe6;
+    padding: 10px;
+    color: #303133;
+    font-size: 14px;
+    border-radius: 5px;
+}
+.common-consumables {
+    display: grid;
+    grid-template-columns: 30% 30% 30%;
+    justify-content: center;
+    align-content: center;
+    margin-top: 10px;
+}
 span,
 a {
     color: #727272;
@@ -149,12 +126,15 @@ img {
     width: 1190px !important;
     margin: auto;
 }
-
 .dashboard-content {
     display: grid;
     grid-template-columns: 20% 44% auto;
     background-color: white;
     border-radius: 15px;
+}
+.dashboard-content-left{
+    display: grid;
+    grid-template-rows: 10% auto 10%;
 }
 .dashboard-content-left,
 .dashboard-content-right,
@@ -164,17 +144,6 @@ img {
 }
 .el-carousel--horizontal {
     border-radius: 15px;
-}
-.dashboard-consumables-list-detail {
-    display: grid;
-    grid-template-columns: auto auto;
-}
-.list-detail-icon {
-    text-align: center;
-}
-.list-detail-text {
-    display: flex;
-    justify-content: space-around;
 }
 .dashboard-content-right {
     display: grid;

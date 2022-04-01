@@ -1,96 +1,235 @@
 <template>
-    <div class="products">
-        <v-dashboard-header />
-        <div class="products-content">
-            <div class="products-filter">
-                <!-- title动态 -->
-                <div class="products-filter-title">products-filter-title</div>
-                <div>
-                    <ul class="products-filter-content">
-                        <li>轻薄笔记本1</li>
-                        <li>轻薄笔记本2</li>
-                        <li>轻薄笔记本3</li>
-                        <li>轻薄笔记本4</li>
-                        <li>轻薄笔记本5</li>
-                        <li>轻薄笔记本6</li>
-                    </ul>
+    <div>
+        <div class="layout-header">
+            <v-header />
+        </div>
+        <div class="products">
+            <v-dashboard-header />
+            <div class="products-content">
+                <div class="products-filter">
+                    <!-- title动态 -->
+                    <div class="products-filter-title">耗材类别</div>
+                    <el-autocomplete
+                        v-model="searchProductKeyword"
+                        :fetch-suggestions="queryProductSearch"
+                        :trigger-on-focus="false"
+                        class="inline-input"
+                        placeholder="输入耗材类别"
+                        @select="handleSelect"
+                        size="small"
+                    />
+                    <el-button :icon="Search" type="primary" size="small">搜索</el-button>
+                    <div class="products-recommendation">
+                        <span>推荐</span>
+                        <ul class="products-filter-content">
+                            <li
+                                v-for="(item, index) in listProductSkusData.slice(0, 5)"
+                                :key="index"
+                            >{{ item.title }}</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <el-row>
-                    <el-col v-for="(o, index) in 6" :key="o" :span="4" :offset="index > 0 ? 2 : 0">
-                        <el-card shadow="hover" :body-style="{ padding: '0px' }">
-                            <el-link href="http://www.baidu.com" target="_blank" :underline="false">
-                                <el-image style="width: 200px; height: 200px" :src="url" :fit="fit"></el-image>
-                                <span>Yummy hamburger</span>
-                            </el-link>
-                        </el-card>
-                    </el-col>
-                </el-row>
+
+                <div class="productSkus-filter">
+                    <!-- title动态 -->
+                    <div class="productSkus-filter-title">耗材型号</div>
+                    <el-autocomplete
+                        v-model="searchProductSkusKeyword"
+                        :fetch-suggestions="queryProductSkusSearch"
+                        :trigger-on-focus="false"
+                        class="inline-input"
+                        placeholder="输入耗材型号"
+                        @select="handleSelect"
+                        size="small"
+                    />
+                    <el-button :icon="Search" type="primary" size="small">搜索</el-button>
+                    <div class="productSkus-recommendation">
+                        <span>推荐</span>
+                        <ul class="productSkus-filter-content">
+                            <li
+                                v-for="(item, index) in listProductData.slice(0, 5)"
+                                :key="index"
+                            >{{ item }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <el-row>
+                        <el-col
+                            v-for="(item, index) in listProductSkusData"
+                            :key="index"
+                            :span="4"
+                            :offset="index > 0 ? 2 : 0"
+                        >
+                            <el-card shadow="hover" :body-style="{ padding: '0px' }">
+                                <router-link
+                                    to="/productDetail"
+                                    :underline="false"
+                                    @click="handleProductDetail(item)"
+                                >
+                                    <el-image
+                                        style="width: 200px; height: 200px"
+                                        :src="item.avatar"
+                                    ></el-image>
+                                    <span>{{ item.productName }} {{ item.title }}</span>
+                                </router-link>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                </div>
+
+                <div class="pagination">
+                    <el-pagination
+                        v-model:currentPage="defaultList.pageNum"
+                        :page-sizes="[8, 16]"
+                        :page-size="defaultList.pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="pageTotal"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                    ></el-pagination>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script setup>
+import vHeader from "../components/Header.vue"
 import { Star, DocumentChecked, Warning, Search } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import VDashboardHeader from '../components/DashboardHeader.vue';
-const fits = ['fill', 'contain', 'cover', 'none', 'scale-down']
-const url =
-    'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-const listData = [
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-    {
-        icon: "fas fa-cubes",
-        name: "88a",
-        linkname: "http://www.baidu.com",
-        event: "28a ",
-        linkevent: "www.baidu.com"
-    },
-]
+import { listProductAllAPI } from '../api/product'
+import { listProductSkusLimitAPI, listProductSkusSearchAPI } from '../api/product-skus'
+import store from "../store"
+const defaultList = ref({
+    pageNum: 1,
+    pageSize: 8,
+    keyword1: null
+})
+const queryProductSearchList = ref({
+    pageNum: 1,
+    pageSize: 5,
+    keyword1: null
+})
+const queryProductSkusSearchList = ref({
+    pageNum: 1,
+    pageSize: 8,
+    keyword1: null
+})
+const searchProductKeyword = ref(null)
+const searchProductSkusKeyword = ref(null)
+const listProductData = ref([])
+const listProductSkusData = ref([])
+const pageTotal = ref(null)
+const handleProductDetail = (item) => {
+    console.log("itemmmmmmmmmmmmmm", item)
+    store.commit("SET_PRODUCT_TITLE", item.productName)
+    store.commit("SET_PRODUCT_SKUS_TITLE", item.title)
+    store.commit("SET_PRODUCT_SKUS_INFO", item.description)
+    store.commit("SET_PRODUCT_SKUS_STOCK", item.stock)
+    store.commit("SET_PRODUCT_SKUS_AVATAR", item.avatar)
+}
+const handleSelect = (item) => {
+    console.log(item)
+}
+const queryProductSearch = (queryString, cb) => {
+    let lists = []
+    queryProductSearchList.value.pageSize = pageTotal.value
+    listProductAllAPI(queryProductSearchList.value).then(res => {
+        for (let i = 0; i < res.data.records.length; i++) {
+            lists[i] = res.data.records[i]
+        }
+        const results = queryString ? lists.filter(createProductFilter(queryString)) : lists
+        cb(results)
+    })
+}
+
+const createProductFilter = (queryString) => {
+    return (list) => {
+        return (
+            list.title.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        )
+    }
+}
+const queryProductSkusSearch = (queryString, cb) => {
+    let lists = []
+    queryProductSearchList.value.pageSize = pageTotal.value
+    listProductSkusSearchAPI(queryProductSearchList.value).then(res => {
+        for (let i = 0; i < res.data.records.length; i++) {
+            lists[i] = res.data.records[i]
+        }
+        const results = queryString ? lists.filter(createProductSkusFilter(queryString)) : lists
+        cb(results)
+    })
+}
+
+const createProductSkusFilter = (queryString) => {
+    return (list) => {
+        return (
+            list.title.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        )
+    }
+}
+
+const handleSizeChange = (val) => {
+    defaultList.value.pageNum = 1
+    defaultList.value.pageSize = val
+    getProductSkusInfo()
+}
+const handleCurrentChange = (val) => {
+    defaultList.value.pageNum = val
+    getProductSkusInfo()
+}
+const getProductInfo = () => {
+    listProductAllAPI().then(res => {
+        for (let i = 0; i < res.data.length;) {
+            listProductData.value[i] = res.data[i++].title
+        }
+    })
+}
+const getProductSkusInfo = () => {
+    listProductSkusSearchAPI().then(res => {
+        listProductSkusData.value = res.data.records
+        pageTotal.value = res.data.total
+    })
+}
+getProductInfo()
+getProductSkusInfo()
 </script>
 <style scoped>
+.layout-header{
+    margin-bottom: 30px;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+.products-recommendation,
+.productSkus-recommendation {
+    display: grid;
+    grid-template-columns: 5% auto;
+    margin-left: 20px;
+}
+.products-recommendation > span,
+.productSkus-recommendation > span {
+    margin-top: 10px;
+}
+.products-filter-content,
+.productSkus-filter-content {
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    margin: 0;
+    padding: 10px;
+}
+:deep().el-input--small .el-input__inner {
+    margin-top: 5px;
+}
+.products-filter button.el-button.el-button--primary.el-button--small,
+.productSkus-filter button.el-button.el-button--primary.el-button--small {
+    height: 20px;
+    margin-top: 5px;
+}
 span,
 a {
     color: #727272;
@@ -148,6 +287,8 @@ h4 {
     grid-template-columns: auto auto auto auto;
     grid-template-rows: auto auto auto auto;
     justify-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 :deep().el-col-offset-2 {
     margin-left: 0;
@@ -155,14 +296,7 @@ h4 {
 :deep().el-col-4 {
     max-width: 100%;
 }
-.products-filter-content {
-    display: flex;
-    margin: 0;
-    padding-left: 10px;
-}
-.products-filter-content > li {
-    margin-right: 10px;
-}
+
 .products {
     display: flex;
     flex-direction: column;
@@ -171,15 +305,23 @@ h4 {
 }
 
 .products-filter {
-    display: flex;
+    display: grid;
+    grid-template-columns: 7.5% 16% 6% auto;
     border: solid 1px;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
-.products-filter-title {
+.productSkus-filter {
+    display: grid;
+    grid-template-columns: 7.5% 16% 6% auto;
+    border: solid 1px;
+}
+.products-filter-title,
+.productSkus-filter-title {
     border-right: solid 1px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px;
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 900;
 }
 .products-content {
     display: flex;

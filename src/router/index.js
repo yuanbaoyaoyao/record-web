@@ -34,6 +34,7 @@ export const constantRoutes = [
     },
     {
         path: "/products",
+        component: Layout,
         name: "Products",
         meta: {
             title: '商品页'
@@ -41,6 +42,7 @@ export const constantRoutes = [
         component: () => import("../views/Products.vue")
     }, {
         path: "/productDetail",
+        component: Layout,
         name: "ProductDetail",
         meta: {
             title: '商品详情页'
@@ -49,6 +51,7 @@ export const constantRoutes = [
     },
     {
         path: "/cart",
+        component: Layout,
         name: "Cart",
         meta: {
             title: '购物车'
@@ -65,6 +68,7 @@ export const constantRoutes = [
     // },
     {
         path: "/confirmOrder",
+        component: Layout,
         name: "ConfirmOrder",
         meta: {
             title: '确认订单'

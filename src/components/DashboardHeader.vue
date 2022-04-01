@@ -20,12 +20,12 @@
                 </div>
             </div>
             <div class="dashboard-search-down">
-                <a
+                <!-- <a
                     :href="item.linkname"
                     target="_blank"
                     v-for="(item,index) in arraySearch"
                     :key="index"
-                >{{ item.name }}</a>
+                >{{ item.name }}</a> -->
             </div>
         </div>
         <div class="dashboard-blank"></div>
