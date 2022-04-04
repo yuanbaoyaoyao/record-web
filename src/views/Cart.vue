@@ -46,8 +46,9 @@
                             <el-image style="width: 100px; height: 100px" :src="scope.row.url"></el-image>
                         </template>
                     </el-table-column>
-                    <el-table-column label="商品名称" prop="name" />
-                    <el-table-column label="单价" prop="price" />
+                    <el-table-column label="耗材类别" prop="name" />
+                    <el-table-column label="耗材型号" prop="name" />
+                    <!-- <el-table-column label="单价" prop="price" /> -->
                     <el-table-column label="数量">
                         <template v-slot="scope">
                             <el-input-number
@@ -58,7 +59,12 @@
                             />
                         </template>
                     </el-table-column>
-                    <el-table-column label="小计">
+                    <!-- <el-table-column label="小计">
+                        <template
+                            v-slot="scope"
+                        >{{ scope.row.subtotal = scope.row.price * scope.row.number }}</template>
+                    </el-table-column> -->
+                    <el-table-column label="库存提示">
                         <template
                             v-slot="scope"
                         >{{ scope.row.subtotal = scope.row.price * scope.row.number }}</template>
@@ -77,15 +83,15 @@
             <div class="cart-list-bottom">
                 <div class="cart-list-bottom-detail">
                     <div class="cart-select-count">已选择{{ numberCount }}件耗材</div>
-                    <div class="cart-money-count">合计:{{ moneyCount }}元</div>
+                    <!-- <div class="cart-money-count">合计:{{ moneyCount }}元</div> -->
                 </div>
                 <!-- <div class="cart-settlement">底部结算</div> -->
                 <div>
                     <template v-if="selectionLength == 0">
-                        <el-button type="info" @click="openMessage">结算</el-button>
+                        <el-button type="info" @click="openMessage">发送订单</el-button>
                     </template>
                     <template v-else>
-                        <el-button type="primary" @click="handleSettlement()">结算</el-button>
+                        <el-button type="primary" @click="handleSettlement()">发送订单</el-button>
                     </template>
                 </div>
             </div>

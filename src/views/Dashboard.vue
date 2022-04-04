@@ -45,7 +45,7 @@
                         </el-icon>
                         <span class="link-text">我的订单</span>
                     </router-link>
-                    <router-link to="/feedback" class="link-info">
+                    <router-link to="/apply" class="link-info">
                         <el-icon>
                             <sold-out />
                         </el-icon>
@@ -61,7 +61,7 @@ import { Star, DocumentChecked, SoldOut, Search, ShoppingBag } from '@element-pl
 import { ref } from 'vue'
 import VDashboardHeader from '../components/DashboardHeader.vue'
 import { listProductAllAPI } from '../api/product'
-import { listProductSkusSearchAPI, listProductSkusLimitAPI } from '../api/product-skus'
+import { listProductSkusSearchIPageAPI, listProductSkusLimitAPI } from '../api/product-skus'
 import router from '../router'
 const listProductData = ref([{}])
 const listProductSkusData = ref()

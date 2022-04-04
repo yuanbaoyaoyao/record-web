@@ -2,6 +2,7 @@
 import { loginByUsername, logout, getUserInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import storage from '../../utils/storage'
 
 const user = {
     state: {
@@ -14,6 +15,7 @@ const user = {
     mutations: {
         SET_USERID: (state, userId) => {
             state.userId = userId
+            storage.set("USER_ID",userId)
         },
         SET_TOKEN: (state, token) => {
             state.token = token

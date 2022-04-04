@@ -100,8 +100,10 @@ import { Star, DocumentChecked, Warning, Search } from '@element-plus/icons-vue'
 import { ref } from 'vue';
 import VDashboardHeader from '../components/DashboardHeader.vue';
 import { listProductAllAPI } from '../api/product'
-import { listProductSkusLimitAPI, listProductSkusSearchAPI } from '../api/product-skus'
+import { listProductSkusLimitAPI, listProductSkusSearchIPageAPI } from '../api/product-skus'
+// import { IsLikeUserCollectAPI } from '../api/user-collect'
 import store from "../store"
+import storage from "../utils/storage";
 const defaultList = ref({
     pageNum: 1,
     pageSize: 8,
@@ -122,13 +124,28 @@ const searchProductSkusKeyword = ref(null)
 const listProductData = ref([])
 const listProductSkusData = ref([])
 const pageTotal = ref(null)
+// const tempIsLikeSearchInfo = ref({
+//     userId: '',
+//     productSkusId: '',
+// })
 const handleProductDetail = (item) => {
     console.log("itemmmmmmmmmmmmmm", item)
+    store.commit("SET_PRODUCT_SKUS_ID", item.id)
+    store.commit("SET_PRODUCT_ID", item.productId)
     store.commit("SET_PRODUCT_TITLE", item.productName)
     store.commit("SET_PRODUCT_SKUS_TITLE", item.title)
     store.commit("SET_PRODUCT_SKUS_INFO", item.description)
     store.commit("SET_PRODUCT_SKUS_STOCK", item.stock)
     store.commit("SET_PRODUCT_SKUS_AVATAR", item.avatar)
+    // tempIsLikeSearchInfo.value.userId = store.getters.userId
+    // tempIsLikeSearchInfo.value.productSkusId = item.id
+    // IsLikeUserCollectAPI(tempIsLikeSearchInfo.value).then(res => {
+    //     if (res.data.length == 0) {
+    //         store.commit("SET_PRODUCT_SKUS_IS_LIKE", false)
+    //     } else {
+    //         store.commit("SET_PRODUCT_SKUS_IS_LIKE", true)
+    //     }
+    // })
 }
 const handleSelect = (item) => {
     console.log(item)
@@ -155,7 +172,7 @@ const createProductFilter = (queryString) => {
 const queryProductSkusSearch = (queryString, cb) => {
     let lists = []
     queryProductSearchList.value.pageSize = pageTotal.value
-    listProductSkusSearchAPI(queryProductSearchList.value).then(res => {
+    listProductSkusSearchIPageAPI(queryProductSearchList.value).then(res => {
         for (let i = 0; i < res.data.records.length; i++) {
             lists[i] = res.data.records[i]
         }
@@ -189,7 +206,7 @@ const getProductInfo = () => {
     })
 }
 const getProductSkusInfo = () => {
-    listProductSkusSearchAPI().then(res => {
+    listProductSkusSearchIPageAPI().then(res => {
         listProductSkusData.value = res.data.records
         pageTotal.value = res.data.total
     })
@@ -198,7 +215,7 @@ getProductInfo()
 getProductSkusInfo()
 </script>
 <style scoped>
-.layout-header{
+.layout-header {
     margin-bottom: 30px;
 }
 .pagination {

@@ -39,15 +39,15 @@
                         <span class="productDetail-select">选择型号</span>
                         <div class="productDetail-select-button">
                             <el-select
-                                v-model="productSkusTitle"
+                                v-model="defaultChangeInfo.productSkusTitle"
                                 class="m-2"
-                                placeholder="请选中型号"
+                                placeholder="请选择型号"
                                 size="large"
-                                @change="handleChangeProductSkus()"
+                                @change="handleChangeProductSkus(defaultChangeInfo.productSkusTitle)"
                             >
                                 <el-option
                                     v-for="item in productSkusOptions"
-                                    :key="item.title"
+                                    :key="item.id"
                                     :label="item.title"
                                     :value="item.title"
                                 ></el-option>
@@ -63,7 +63,7 @@
                         <div class="productDetail-select-button">
                             <el-input-number
                                 size="large"
-                                v-model="num"
+                                v-model="productSkusNumber"
                                 :min="1"
                                 :max="10"
                                 @change="handleChange"
@@ -78,31 +78,55 @@
                     <div class="productDetail-moneyCount">moneyCount</div>
                     </div>-->
                     <div class="productDetail-button">
-                        <el-button>
+                        <el-button @click="handleAddToCart()">
                             <el-icon>
                                 <shopping-cart />
                             </el-icon>加入购物车
                         </el-button>
-                        <el-button>
+                        <el-button @click="handleDisLike()" v-if="productSKusIsLike">
+                            <el-icon>
+                                <star-filled />
+                            </el-icon>
+                            <span>已收藏</span>
+                        </el-button>
+                        <el-button @click="handleLike()" v-else>
                             <el-icon>
                                 <star />
                             </el-icon>
-                            <span>喜欢</span>
+                            <span>收藏</span>
                         </el-button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <el-dialog v-model="dialogVisible" title="Tips" width="30%" :before-close="handleClose">
+        <span>
+            <el-icon>
+                <check />
+            </el-icon>加入购物车成功
+        </span>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="handleToProducts()">前往耗材展示页</el-button>
+                <el-button @click="dialogVisible = false">留在本页</el-button>
+                <el-button type="primary" @click="handleToCart()">前往购物车</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 <script setup>
 import vHeader from "../components/Header.vue"
-import { Star, ShoppingCart } from '@element-plus/icons';
+import { Star, ShoppingCart, StarFilled, Check } from '@element-plus/icons';
 import { ref, computed } from 'vue';
 import { listProductAllAPI } from '../api/product'
 import { listProductSkusSearchAPI } from '../api/product-skus'
+import { createUserCollectAPI, deleteUserCollectAPI, IsLikeUserCollectAPI } from '../api/user-collect'
+import { createCartAPI, listOneCartAPI, updateCartAPI } from "../api/cart"
 import store from "../store"
 import storage from '../utils/storage';
+import router from "../router";
+import { ElMessage } from 'element-plus'
 
 const search = ref('')
 const input = ref('')
@@ -114,19 +138,30 @@ const productTitle = computed(() => {
     }
 })
 
-const productSkusTitle = computed(() => {
-    if (store.getters.productSkusTitle != '') {
-        return store.getters.productSkusTitle
-    } else {
-        return storage.get("PRODUCT_SKUS_TITLE")
-    }
+// const productSkusTitle = ref("")
+// const productSkusId = ref("")
+const defaultChangeInfo = ref({
+    productSkusTitle: '',
+    productSkusId: '',
+    productSkusInfo: '',
+    productSkusAvatar: '',
+    productSkusStock: ''
 })
+const dialogVisible = ref(false)
 
 const productSkusInfo = computed(() => {
     if (store.getters.productSkusInfo != '') {
         return store.getters.productSkusInfo
     } else {
         return storage.get("PRODUCT_SKUS_INFO")
+    }
+})
+
+const productSkusId = computed(() => {
+    if (store.getters.productSkusId != '') {
+        return store.getters.productSkusId
+    } else {
+        return storage.get("PRODUCT_SKUS_ID")
     }
 })
 
@@ -138,13 +173,13 @@ const productSkusStock = computed(() => {
     }
 })
 
-const productSkusNumber = computed(() => {
-    if (store.getters.productSkusNumber != '') {
-        return store.getters.productSkusNumber
-    } else {
-        return storage.get("PRODUCT_SKUS_NUMBER")
-    }
-})
+// const productSkusNumber = computed(() => {
+//     if (store.getters.productSkusNumber != '') {
+//         return store.getters.productSkusNumber
+//     } else {
+//         return storage.get("PRODUCT_SKUS_NUMBER")
+//     }
+// })
 
 const productSkusAvatar = computed(() => {
     if (store.getters.productSkusAvatar != '') {
@@ -154,25 +189,136 @@ const productSkusAvatar = computed(() => {
     }
 })
 
+const productSKusIsLike = computed(() => {
+    if (store.getters.productSKusIsLike != '') {
+        return store.getters.productSKusIsLike
+    } else {
+        return storage.get("PRODUCT_SKUS_IS_LIKE")
+    }
+})
 const productSkusOptions = ref([])
-const num = ref(1)
+const productSkusNumber = ref(1)
+const productSkusTemp = ref({
+    productSkusId: '',
+    userId: ''
+})
+
+const handleToCart = () => {
+    router.push("/cart")
+}
+const handleToProducts = ()=>{
+    router.push("/products")
+}
+
+const handleAddToCart = () => {
+    //首先查询，如果没有则create
+    //如果有，则update
+    let tempInfo = {
+        userId: storage.get("USER_ID"),
+        productSkusId: storage.get("PRODUCT_SKUS_ID"),
+        productSkusNumber: productSkusNumber.value
+    }
+    listOneCartAPI(tempInfo).then(res => {
+        if (res.data == null) {
+            createCartAPI(tempInfo).then(resCreate => {
+                dialogVisible.value = true
+            })
+        } else {
+            tempInfo.productSkusNumber += res.data.productSkusNumber
+            updateCartAPI(tempInfo).then(resUpdate => {
+                dialogVisible.value = true
+            })
+        }
+        console.log("resssssssssssssssssssss:", res)
+    })
+    // createCartAPI
+    // dialogVisible.value = true
+
+}
+
+const handleLike = () => {
+    createUserCollectAPI(productSkusTemp.value).then(res => {
+        ElMessage({
+            type: 'success',
+            message: '收藏成功',
+        })
+        store.commit("SET_PRODUCT_SKUS_IS_LIKE", true)
+    })
+}
+
+const handleDisLike = () => {
+    let tempInfo = {}
+    IsLikeUserCollectAPI(productSkusTemp.value).then(res => {
+        tempInfo = res.data[0]
+        deleteUserCollectAPI(tempInfo).then(res => {
+            ElMessage({
+                message: '取消收藏成功',
+            })
+            store.commit("SET_PRODUCT_SKUS_IS_LIKE", false)
+        })
+    })
+}
+
 const handleChange = (value) => {
     console.log(value)
 }
+
 const getProductSkusInfo = () => {
-    listProductSkusSearchAPI().then(res => {
-        productSkusOptions.value = res.data.records
-        console.log("productSkusOptions", productSkusOptions.value)
+    defaultChangeInfo.value.productSkusTitle = storage.get("PRODUCT_SKUS_TITLE")
+    if (store.getters.userId != '') {
+        productSkusTemp.value.userId = store.getters.userId
+    } else {
+        productSkusTemp.value.userId = storage.get("USER_ID")
+    }
+    let tempInfo = { productId: storage.get("PRODUCT_ID") }
+    listProductSkusSearchAPI(tempInfo).then(res => {
+        productSkusOptions.value = res.data
+        console.log("productSkusOptionssss", productSkusOptions.value)
+        for (let i = 0; i < productSkusOptions.value.length; i++) {
+            if (defaultChangeInfo.value.productSkusTitle == productSkusOptions.value[i].title) {
+                productSkusTemp.value.productSkusId = productSkusOptions.value[i].id
+            }
+        }
+        console.log("productSkusTemp.value", productSkusTemp.value)
+        let tempInfoSkus = { id: productSkusTemp.value.productSkusId }
+        listProductSkusSearchAPI(tempInfoSkus).then(res => {
+            store.commit("SET_PRODUCT_SKUS_AVATAR", res.data[0].avatar)
+            store.commit("SET_PRODUCT_SKUS_INFO", res.data[0].description)
+            store.commit("SET_PRODUCT_SKUS_STOCK", res.data[0].stock)
+        })
+
+        IsLikeUserCollectAPI(productSkusTemp.value).then(res => {
+            // tempInfo = res.data[0]
+            console.log("res:", res)
+            if (res.data.length == 1) {
+                store.commit("SET_PRODUCT_SKUS_IS_LIKE", true)
+            } else {
+                store.commit("SET_PRODUCT_SKUS_IS_LIKE", false)
+            }
+        })
+
+        // console.log("productSkusTemp.value1", productSkusTemp.value)
+        // for (let i = 0; i < productSkusOptions.value.length; i++) {
+        //     if (defaultChangeInfo.value.productSkusTitle == productSkusOptions.value[i].title) {
+        //         store.commit("SET_PRODUCT_SKUS_ID", productSkusOptions.value[i].id)
+        //         break;
+        //     }
+        // }
     })
 }
-const handleChangeProductSkus = (value) => {
-    store.commit("SET_PRODUCT_SKUS_TITLE", value)
 
+const handleChangeProductSkus = (value) => {
+    console.log("valueeeeeeeeeeee", value)
+    store.commit("SET_PRODUCT_SKUS_TITLE", value)
+    // store.commit("SET_PRODUCT_SKUS_AVATAR")
+    // store.commit("SET_PRODUCT_SKUS_INFO")
+    // store.commit("SET_PRODUCT_SKUS_STOCK")
+    getProductSkusInfo()
 }
 getProductSkusInfo()
 </script>
 <style scoped>
-.layout-header{
+.layout-header {
     margin-bottom: 30px;
 }
 hr {

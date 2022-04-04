@@ -100,7 +100,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons'
 import router from '../../router';
 import { listProductAllAPI } from '../../api/product';
-import { listProductSkusSearchAPI } from '../../api/product-skus'
+import { listProductSkusSearchIPageAPI } from '../../api/product-skus'
 // import { createUserOrderAPI } from '../../api/product-apply'
 import { createUserOrderAPI,updateUserOrderAPI } from '../../api/user-order'
 import { listUserAddressAPI } from '../../api/user-address'
@@ -136,7 +136,7 @@ const querySearchProduct = (queryString, cb) => {
 const querySearchProductSkus = (queryString, cb) => {
     let lists = []
     querySearchList.value.keyword1 = ruleForm.productTitle
-    listProductSkusSearchAPI(querySearchList.value).then(res => {
+    listProductSkusSearchIPageAPI(querySearchList.value).then(res => {
         for (let i = 0; i < res.data.records.length; i++) {
             lists[i] = res.data.records[i]
         }

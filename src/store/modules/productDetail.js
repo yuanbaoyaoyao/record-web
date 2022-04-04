@@ -3,7 +3,10 @@ import storage from "../../utils/storage"
 const productDetail = {
     state: {
         productTitle: '',
+        productId:'',
+        productSKusIsLike: '',
         productSkusTitle: '',
+        productSkusId: '',
         productSkusAvatar: '',
         productSkusInfo: '',
         productSkusNumber: '',
@@ -14,9 +17,21 @@ const productDetail = {
             state.productTitle = productTitle
             storage.set("PRODUCT_TITLE", productTitle)
         },
+        SET_PRODUCT_ID: (state, productId) => {
+            state.productId = productId
+            storage.set("PRODUCT_ID", productId)
+        },
+        SET_PRODUCT_SKUS_IS_LIKE: (state, productSKusIsLike) => {
+            state.productSKusIsLike = productSKusIsLike
+            storage.set("PRODUCT_SKUS_IS_LIKE", productSKusIsLike)
+        },
         SET_PRODUCT_SKUS_TITLE: (state, productSkusTitle) => {
             state.productSkusTitle = productSkusTitle
             storage.set("PRODUCT_SKUS_TITLE", productSkusTitle)
+        },
+        SET_PRODUCT_SKUS_ID: (state, productSkusId) => {
+            state.productSkusId = productSkusId
+            storage.set("PRODUCT_SKUS_ID", productSkusId)
         },
         SET_PRODUCT_SKUS_AVATAR: (state, productSkusAvatar) => {
             state.productSkusAvatar = productSkusAvatar

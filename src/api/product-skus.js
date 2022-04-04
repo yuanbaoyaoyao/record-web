@@ -2,6 +2,9 @@ import http from "../utils/http";
 
 let resquest = "/clientIp/productSkusClient/"
 
+export function listProductSkusSearchIPageAPI(params){
+    return http.get(`${resquest}`+`listSearchIPage`,params)
+}
 export function listProductSkusSearchAPI(params){
     return http.get(`${resquest}`+`listSearch`,params)
 }
