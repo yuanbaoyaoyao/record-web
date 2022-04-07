@@ -12,5 +12,5 @@ export function listProductSkusLimitAPI(params){
     return http.get(`${resquest}`+`listLimit`,params)
 }
 export function updateProductSkusAPI(params){
-    return http.post(`${resquest}`+`update`,params)
+    return http.put(`${resquest}`+`update`,params)
 }

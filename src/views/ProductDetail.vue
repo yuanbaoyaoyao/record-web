@@ -206,7 +206,7 @@ const productSkusTemp = ref({
 const handleToCart = () => {
     router.push("/cart")
 }
-const handleToProducts = ()=>{
+const handleToProducts = () => {
     router.push("/products")
 }
 
@@ -265,11 +265,7 @@ const handleChange = (value) => {
 
 const getProductSkusInfo = () => {
     defaultChangeInfo.value.productSkusTitle = storage.get("PRODUCT_SKUS_TITLE")
-    if (store.getters.userId != '') {
-        productSkusTemp.value.userId = store.getters.userId
-    } else {
-        productSkusTemp.value.userId = storage.get("USER_ID")
-    }
+    productSkusTemp.value.userId = storage.get("USER_ID")
     let tempInfo = { productId: storage.get("PRODUCT_ID") }
     listProductSkusSearchAPI(tempInfo).then(res => {
         productSkusOptions.value = res.data

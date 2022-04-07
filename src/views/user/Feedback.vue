@@ -170,8 +170,8 @@ hr {
     width: 1004px;
 }
 :deep().el-image__inner {
-    height: 144px !important;
-    width: 144px !important;
+    height: 80px !important;
+    width: 80px !important;
 }
 .feedback {
     margin: 25px;
@@ -187,8 +187,11 @@ hr {
 }
 .feedback-info {
     border-bottom: 1px solid #cfeeab;
-    padding: 25px 30px;
+    padding: 15px 15px;
+    padding-left: 30px;
     color: rgb(136, 190, 136);
+    display: flex;
+    justify-content: space-between;
 }
 .division {
     margin: 5px;
@@ -202,7 +205,8 @@ hr {
 .feedback-pic {
     display: grid;
     grid-template-columns: 20% auto 20%;
-    padding: 25px 30px;
+    padding: 15px 10px;
+    padding-left: 30px;
     align-items: center;
 }
 :deep().el-form-item__label {

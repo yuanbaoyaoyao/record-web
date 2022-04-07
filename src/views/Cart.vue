@@ -43,11 +43,11 @@
                     <el-table-column type="selection" width="80" />
                     <el-table-column>
                         <template v-slot="scope">
-                            <el-image style="width: 100px; height: 100px" :src="scope.row.url"></el-image>
+                            <el-image style="width: 100px; height: 100px" :src="scope.row.avatar"></el-image>
                         </template>
                     </el-table-column>
-                    <el-table-column label="耗材类别" prop="name" />
-                    <el-table-column label="耗材型号" prop="name" />
+                    <el-table-column label="耗材类别" prop="productName" />
+                    <el-table-column label="耗材型号" prop="title" />
                     <!-- <el-table-column label="单价" prop="price" /> -->
                     <el-table-column label="数量">
                         <template v-slot="scope">
@@ -63,12 +63,8 @@
                         <template
                             v-slot="scope"
                         >{{ scope.row.subtotal = scope.row.price * scope.row.number }}</template>
-                    </el-table-column> -->
-                    <el-table-column label="库存提示">
-                        <template
-                            v-slot="scope"
-                        >{{ scope.row.subtotal = scope.row.price * scope.row.number }}</template>
-                    </el-table-column>
+                    </el-table-column>-->
+                    <el-table-column label="库存提示" prop="stock"></el-table-column>
                     <el-table-column label="操作" align="right">
                         <template #default="scope">
                             <el-button
@@ -88,10 +84,10 @@
                 <!-- <div class="cart-settlement">底部结算</div> -->
                 <div>
                     <template v-if="selectionLength == 0">
-                        <el-button type="info" @click="openMessage">发送订单</el-button>
+                        <el-button type="info" @click="openMessage">结算</el-button>
                     </template>
                     <template v-else>
-                        <el-button type="primary" @click="handleSettlement()">发送订单</el-button>
+                        <el-button type="primary" @click="handleSettlement()">结算</el-button>
                     </template>
                 </div>
             </div>
@@ -101,90 +97,138 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import vHeader from "../components/Header.vue"
-import router from '../router';
+import router from '../router'
+import { listCartAPI, updateCartListAPI, listOneCartAPI, deleteCartAPI, updateCartAPI, updateCartCheckedDefaultAPI } from '../api/cart'
+import { listProductSkusSearchAPI } from '../api/product-skus'
+import storage from '../utils/storage'
 
 const search = ref('')
 const input = ref('')
 
 const filterTableData = computed(() =>
-    tableData.filter(
+    tableData.value.filter(
         (data) =>
             !search.value ||
             data.name.toLowerCase().includes(search.value.toLowerCase())
     )
 )
 const handleDelete = (index, row) => {
-    console.log(index, row)
+    console.log(row)
+    let tempInfo = { userId: storage.get("USER_ID"), productSkusId: row.id }
+    ElMessageBox.confirm(
+        '是否确认删除此耗材',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        },
+    ).then(() => {
+        listOneCartAPI(tempInfo).then(res => {
+            console.log("ressssssssss", res)
+            let tempOneInfo = { id: res.data.id }
+
+            deleteCartAPI(tempOneInfo).then(resDelete => {
+                tableData.value = []
+                getCartListData()
+            })
+            ElMessage({
+                type: 'success',
+                message: '删除成功',
+            })
+        })
+    })
 }
 
 const handleChange = (value) => {
     console.log(value)
+    let tempInfo = { productSkusNumber: value, userId: storage.get("USER_ID"), productSkusId: storage.get("PRODUCT_SKUS_ID") }
+    updateCartAPI(tempInfo).then(res => {
+        console.log("resssssssssssss:", res)
+    })
 }
 
-const tableData = [
-    {
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        name: 'Tom',
-        price: '14',
-        number: 6,
-    },
-    {
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        name: 'John',
-        price: '18',
-        number: 8,
-
-
-    },
-    {
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        name: 'Morgan',
-        price: '18',
-        number: 90,
-
-    },
-    {
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        name: 'Jessy',
-        price: '88',
-        number: 4,
-    },
-]
+const tableData = ref([])
+const cartListData = ref([])
 const numberCount = ref(0)
-const moneyCount = ref(0)
+// const moneyCount = ref(0)
 const selectionLength = ref(0)
+const tempCheckedInfo = ref([])
 
-const handleSettlement=()=>{
-    router.push("/confirmOrder")
+const getCartListData = () => {
+    let tempCartInfo = { userId: storage.get("USER_ID") }
+    listCartAPI(tempCartInfo).then(res => {
+        cartListData.value = res.data
+        for (let i = 0; i < cartListData.value.length; i++) {
+            let tempCartDetail = { id: cartListData.value[i].productSkusId }
+            listProductSkusSearchAPI(tempCartDetail).then(resCartDetail => {
+                resCartDetail.data[0].number = cartListData.value[i].productSkusNumber
+                tableData.value.push(resCartDetail.data[0])
+            })
+        }
+    })
+}
+
+
+
+const handleSettlement = () => {
+    let checkedOrderProductsInfo = []
+    for (let i = 0; i < tempCheckedInfo.value.length; i++) {
+        let tempInfo = {}
+        tempInfo.userId = storage.get("USER_ID")
+        tempInfo.productSkusId = tempCheckedInfo.value[i].id
+        console.log("tempCheckedInfo.value[i].id", tempCheckedInfo.value[i].id)
+        tempInfo.checked = 1
+        checkedOrderProductsInfo.push(tempInfo)
+    }
+    console.log("tempCheckedInfo", tempCheckedInfo.value)
+    console.log("checkedOrderProductsInfo", checkedOrderProductsInfo)
+    updateCartListAPI(checkedOrderProductsInfo).then(res => {
+        router.push("/confirmOrder")
+    })
 }
 
 const selectChecked = (selection) => {
+    console.log("selectionnnnnnnnn", selection)
+    tempCheckedInfo.value = selection
     let temp = 0, tempMoneyCount = 0
     for (let element of selection) {
         temp += element.number
-        tempMoneyCount += element.subtotal
+        // tempMoneyCount += element.subtotal
     }
     selectionLength.value = selection.length
     numberCount.value = temp
-    moneyCount.value = tempMoneyCount
+    // moneyCount.value = tempMoneyCount
 }
 
 const selectAllChecked = (selection) => {
+    console.log("selectionnnnnnnnn", selection)
+    tempCheckedInfo.value = selection
+
     let temp = 0, tempMoneyCount = 0
     for (let element of selection) {
         temp += element.number
-        tempMoneyCount += element.subtotal
+        // tempMoneyCount += element.subtotal
     }
     selectionLength.value = selection.length
 
     numberCount.value = temp
-    moneyCount.value = tempMoneyCount
+    // moneyCount.value = tempMoneyCount
 }
 const openMessage = () => {
     ElMessage('请勾选需要结算的耗材')
 }
+
+const init = () => {
+    let tempCartInfo = { userId: storage.get("USER_ID") }
+    updateCartCheckedDefaultAPI(tempCartInfo).then(res => {
+        getCartListData()
+    })
+}
+
+init()
+
 </script>
 <style scoped>
 .layout-header {

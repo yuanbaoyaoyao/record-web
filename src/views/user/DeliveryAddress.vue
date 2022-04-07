@@ -10,7 +10,7 @@
                     :icon="CirclePlusFilled"
                     class="box-card"
                     type="primary"
-                    @click="dialogFormVisible = true"
+                    @click="handleCreateAddress()"
                 >添加新地址</el-button>
                 <el-card v-for="i in tableData" :key="i" class="box-card">
                     <template #header>
@@ -18,13 +18,15 @@
                             <span>{{ i.receiver }}</span>
                         </div>
                     </template>
-                    <div class="text item">领用人: {{ i.receiver }}</div>
-                    <div class="text item">使用人: {{ i.user }}</div>
-                    <div class="text item">领用人电话号码: {{ i.phone }}</div>
-                    <div class="text item">地址详情: {{ i.addressDetail }}</div>
-                    <div class="button">
-                        <el-button class="button-detail" type="text" @click="handleUpdate(i)">修改</el-button>
-                        <el-button class="button-detail" type="text">删除</el-button>
+                    <div class="address-detail">
+                        <div class="text item">领用人: {{ i.receiver }}</div>
+                        <div class="text item">使用人: {{ i.user }}</div>
+                        <div class="text item">领用人电话号码: {{ i.phone }}</div>
+                        <div class="text item">地址详情: {{ i.addressDetail }}</div>
+                        <div class="button">
+                            <el-button class="button-detail" type="text" @click="handleUpdate(i)">修改</el-button>
+                            <el-button class="button-detail" type="text" @click="handleDelete(i)">删除</el-button>
+                        </div>
                     </div>
                 </el-card>
             </el-space>
@@ -62,16 +64,20 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取消</el-button>
-                <el-button type="primary" @click="updateData">确定</el-button>
+
+                <el-button v-if="dialogStatus == 'update'" type="primary" @click="updateData()">确定</el-button>
+                <el-button v-else type="primary" @click="createData()">确定</el-button>
             </span>
         </template>
     </el-dialog>
 </template>
 <script setup>
 import { CirclePlusFilled } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import store from '../../store';
-import { listUserAddressAPI, updateUserAddressAPI, deleteUserAddressAPI } from '../../api/user-address'
+import { listUserAddressAPI, updateUserAddressAPI, createUserAddressAPI, deleteUserAddressAPI } from '../../api/user-address'
+import storage from '../../utils/storage';
 
 const dialogTableVisible = ref(false)
 const dialogFormVisible = ref(false)
@@ -83,20 +89,38 @@ const props = {
 
 const username = store.getters.name
 const tableData = ref([])
-// const defaultList = ref({
-//     userId: ''
-// })
 const dialogStatus = ref('')
 
 const getList = () => {
     // defaultList.value.userId = store.getters.userId
-    defaultForm.value.userId = store.getters.userId
+    defaultForm.value.userId = storage.get("USER_ID")
 
     listUserAddressAPI(defaultForm.value).then(res => {
         tableData.value = res.data
         console.log("tableData", tableData.value)
     }).catch()
 }
+
+const handleCreateAddress = () => {
+    defaultForm.value = { ...defaultFormTemp }
+    defaultForm.value.userId = storage.get("USER_ID")
+    dialogStatus.value = "create"
+    dialogFormVisible.value = true
+}
+
+const createData = () => {
+    createUserAddressAPI(defaultForm.value).then(res => {
+        console.log("ressssssssssssss:", res)
+        ElMessage({
+            type: 'success',
+            message: '创建地址成功',
+        })
+        getList()
+    })
+    dialogFormVisible.value = false
+}
+
+// const createdAddress
 
 const handleUpdate = (i) => {
     console.log(i)
@@ -106,14 +130,35 @@ const handleUpdate = (i) => {
 }
 
 const updateData = () => {
-
     updateUserAddressAPI(defaultForm.value).then(res => {
+        ElMessage({
+            type: 'success',
+            message: '修改地址成功',
+        })
         getList()
     }).catch(
         console.log("false")
     )
     dialogFormVisible.value = false
     dialogStatus == ''
+}
+
+const handleDelete = (i) => {
+    ElMessageBox.confirm('是否删除地址', '提示',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }).then(() => {
+            deleteUserAddressAPI(i).then(res => {
+                ElMessage({
+                    type: 'success',
+                    message: '删除地址成功',
+                })
+                getList()
+            })
+        })
+
 }
 
 const defaultFormTemp = reactive({
@@ -126,12 +171,12 @@ const defaultFormTemp = reactive({
     // tag:[],
 })
 
+const defaultForm = ref(Object.assign({}, defaultFormTemp))
 const textMap = {
     update: '编辑收货地址',
     create: '创建收货地址'
 }
 
-const defaultForm = ref(Object.assign({}, defaultFormTemp));
 
 const options = [
     {
@@ -435,5 +480,8 @@ hr {
     width: 280px;
     height: 200px;
     margin: 15px;
+}
+.address-detail {
+    display: grid;
 }
 </style>

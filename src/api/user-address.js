@@ -5,6 +5,9 @@ let resquest = "/clientIp/client/userAddress/"
 export function listUserAddressAPI(params){
     return http.get(`${resquest}`+`list`,params)
 }
+export function listOneUserAddressAPI(params){
+    return http.get(`${resquest}`+`listOne`,params)
+}
 export function createUserAddressAPI(params){
     return http.post(`${resquest}`+`create`,params)
 }

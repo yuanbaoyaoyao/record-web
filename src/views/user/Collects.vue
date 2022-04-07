@@ -42,6 +42,8 @@ const listUserCollect = ref([])
 const userId = computed(() => {
     if (store.getters.userId != '') {
         return store.getters.userId
+    }else{
+        return storage.get("USER_ID")
     }
 })
 const defaultList = ref({
@@ -61,6 +63,8 @@ const handleSizeChange = (val) => {
 
 const handleDetail = (item) => {
     console.log("itemmmmmmmmmmmmmmmm:", item)
+    store.commit("SET_PRODUCT_ID", item.productId)
+    store.commit("SET_PRODUCT_SKUS_ID", item.id)
     store.commit("SET_PRODUCT_TITLE", item.productName)
     store.commit("SET_PRODUCT_SKUS_TITLE", item.title)
     store.commit("SET_PRODUCT_SKUS_INFO", item.description)
