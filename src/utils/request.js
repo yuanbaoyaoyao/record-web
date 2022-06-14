@@ -1,22 +1,24 @@
 import axios from "axios";
 import {
-    ElMessage
+    ElMessage,
+    ElNotification
 } from "element-plus";
 import store from "../store";
 import { getToken } from "./auth";
 
 const service = axios.create({
     baseURL: process.env.VUE_APP_API_URL,
-    timeout: 3 * 1000,
+    timeout: 6 * 1000,
     headers: {
         'Content-Type': 'application/json;charset=UTF-8',
     }
 })
-
+// request拦截器
 service.interceptors.request.use(
     config => {
         if (store.getters.token) {
-            config.headers['Authorization'] = getToken()
+            // jwt认证
+            config.headers['Authorization'] = 'Bearer ' + getToken()
         }
         return config;
     },
@@ -27,7 +29,7 @@ service.interceptors.request.use(
 )
 
 let message
-
+// response拦截器
 service.interceptors.response.use(
     response => {
         return response.data;
@@ -35,6 +37,7 @@ service.interceptors.response.use(
     error => {
         if (error.response && error.response.status) {
             const status = error.response.status
+            const errorMsg = error.response.data.message
             switch (status) {
                 case 400:
                     message = '请求错误';
@@ -73,14 +76,25 @@ service.interceptors.response.use(
                     message = 'HTTP版本不受支持';
                     break;
                 default:
-                    message = '请求失败'
+                    if (errorMsg != undefined) {
+                        message = errorMsg
+                    } else {
+                        message = '请求失败'
+                    }
             }
         } else {
             if (JSON.stringify(error).includes('timeout')) {
-                ElMessage.error('服务器响应超时，请刷新当前页')
+                ElNotification({
+                    title: "服务器响应超时，请刷新当前页",
+                    type: "error",
+                });
             }
         }
-        ElMessage.error(message)
+        // ElMessage.error(message)
+        ElNotification({
+            title: message,
+            type: "error",
+        });
         return Promise.reject(error);
     }
 )

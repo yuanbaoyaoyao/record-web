@@ -38,108 +38,68 @@
     </div>
 
     <el-dialog v-model="dialogFormVisible" title="查看订单详情">
-        <el-descriptions class="margin-top" :column="3" :size="size" border>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <user />
-                        </el-icon>耗材类别
-                    </div>
-                </template>
-                {{ tableDetail.productTitle }}
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <iphone />
-                        </el-icon>耗材型号
-                    </div>
-                </template>
-                {{ tableDetail.productSkusTitle }}
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <location />
-                        </el-icon>耗材数量
-                    </div>
-                </template>
-                {{ tableDetail.productNumber }}
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <tickets />
-                        </el-icon>订单状态
-                    </div>
-                </template>
-                <el-tag size="small">{{ tableDetail.orderStatus }}</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <office-building />
-                        </el-icon>订单号
-                    </div>
-                </template>
-                {{ tableDetail.orderSn }}
-            </el-descriptions-item>
-        </el-descriptions>
-        <el-descriptions class="margin-top" :column="3" :size="size" border>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <office-building />
-                        </el-icon>申请人
-                    </div>
-                </template>
-                {{ tableDetail.receiver }}
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <office-building />
-                        </el-icon>使用人
-                    </div>
-                </template>
-                {{ tableDetail.user }}
-            </el-descriptions-item>
-        </el-descriptions>
-        <el-descriptions class="margin-top" :column="3" :size="size" border>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <office-building />
-                        </el-icon>地址
-                    </div>
-                </template>
-                {{ tableDetail.userAddressId }}
-            </el-descriptions-item>
-        </el-descriptions>
+        <div class="content-info-detail">
+            <div class="content-info-detail-part">
+                <span class="table-head">
+                    <el-icon>
+                        <info-filled />
+                    </el-icon>基本信息
+                </span>
+                <div>
+                    <el-row class="table-row">
+                        <el-col class="table-title" :span="6">订单号</el-col>
+                        <el-col class="table-title" :span="18">订单留言</el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col class="table-detail" :span="6">{{ userOrderViewInfo.orderSn }}</el-col>
+                        <el-col class="table-detail" :span="18">{{ userOrderViewInfo.orderRemarks }}</el-col>
+                    </el-row>
+                </div>
+            </div>
+            <div class="content-info-detail-part">
+                <span class="table-head">
+                    <el-icon>
+                        <info-filled />
+                    </el-icon>领用人信息
+                </span>
+                <el-row class="table-row">
+                    <el-col class="table-title" :span="6">领用人</el-col>
+                    <el-col class="table-title" :span="6">使用人</el-col>
+                    <el-col class="table-title" :span="12">收货地址</el-col>
+                </el-row>
+                <el-row>
+                    <el-col class="table-detail" :span="6">{{ userOrderViewInfo.receiver }}</el-col>
+                    <el-col class="table-detail" :span="6">{{ userOrderViewInfo.user }}</el-col>
+                    <el-col class="table-detail" :span="12">{{ userOrderViewInfo.addressDetail }}</el-col>
+                </el-row>
+            </div>
+            <div class="content-info-detail-part">
+                <span class="table-head">
+                    <el-icon>
+                        <info-filled />
+                    </el-icon>耗材信息
+                </span>
+                <el-table class="table-row" ref="multipleTable" border :data="userOrderProductInfo">
+                    <el-table-column label="耗材类别">
+                        <template v-slot="scope">
+                            <p>{{ scope.row.productTitle }}</p>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="耗材型号">
+                        <template v-slot="scope">
+                            <p>{{ scope.row.productSkusTitle }}</p>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="耗材数量">
+                        <template v-slot="scope">
+                            <p>{{ scope.row.number }}</p>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
 
-        <el-descriptions class="margin-top" :column="3" :size="size" border>
-            <el-descriptions-item>
-                <template #label>
-                    <div class="cell-item">
-                        <el-icon :style="iconStyle">
-                            <office-building />
-                        </el-icon>备注
-                    </div>
-                </template>
-                {{ tableDetail.orderRemarks }}
-            </el-descriptions-item>
-        </el-descriptions>
-
-        <template #footer>
-            <span class="dialog-footer">
+            <!-- <template #footer> -->
+            <div class="dialog-footer">
                 <template v-if="tableDetail && tableDetail.orderStatus == '审核中'">
                     <el-button type="danger" @click="updateDataCancel(tableDetail)">取消订单</el-button>
                 </template>
@@ -150,8 +110,10 @@
                 <template v-if="tableDetail && tableDetail.orderStatus == '已收货'">
                     <el-button type="primary" @click="updateDataEvaluate(tableDetail)">评价订单</el-button>
                 </template>
-            </span>
-        </template>
+            </div>
+
+            <!-- </template> -->
+        </div>
     </el-dialog>
 </template>
 <script setup>
@@ -166,6 +128,7 @@ import {
     Tickets,
     OfficeBuilding,
 } from '@element-plus/icons-vue'
+import storage from '../../utils/storage';
 
 const size = ref('')
 const iconStyle = computed(() => {
@@ -215,14 +178,27 @@ const status = {
     "0": "已驳回",
     "-1": "已取消",
 }
+
+const userOrderViewInfo = ref({
+    orderSn: '',
+    receiver: '',
+    user: '',
+    addressDetail: '',
+    orderStatus: '',
+    orderRemarks: '',
+
+})
+const userOrderInfo = ref()
+
 const changeStatus = (i, index) => {
     tableData.value[index].orderStatus = status[i]
 }
 
 const getList = () => {
-    defaultForm.value.userId = store.getters.userId
+    defaultForm.value.userId = storage.get("USER_ID")
     listUserOrderAPI(defaultForm.value).then(res => {
         tableData.value = res.data.records
+        console.log("tableData", tableData.value)
         for (let i = 0; i < tableData.value.length; i++) {
             changeStatus(tableData.value[i].orderStatus, i)
         }
@@ -265,17 +241,18 @@ const getListToBeEvaluated = () => {
 }
 
 const handleUpdate = (index, row) => {
-    console.log("row", row)
     tableDetail.value = row
+    let tempInfo = { orderSn: row.orderSn, userId: storage.get("USER_ID") }
+    listUserOrderAPI(tempInfo).then(res => {
+        userOrderInfo.value = res.data.records
+        for (let i = 0; i < userOrderInfo.value.length; i++) {
+            changeStatus(userOrderInfo.value[i].orderStatus, i)
+        }
+        userOrderViewInfo.value = userOrderInfo.value[0]
+        console.log("userOrderInfo:", userOrderInfo.value)
+    }).catch()
     dialogFormVisible.value = true
 }
-// const updateData = () => {
-//     updateUserOrderAPI(defaultForm.value).then(res => {
-//         getList()
-//     }).catch(console.log("false"))
-//     dialogFormVisible.value = false
-// }
-
 const updateDataCancel = (tableDetail) => {
 
     //添加handleconfirm
@@ -417,5 +394,36 @@ a:active {
     grid-template-columns: auto auto auto auto;
     width: 400px;
     padding: 0px;
+}
+.content-info-detail-part {
+    margin-bottom: 20px;
+}
+.table-head {
+    font-size: larger;
+}
+.table-row {
+    margin-top: 20px;
+}
+.table-title {
+    border: 1px solid #dcdfe6;
+    padding: 10px;
+    background: #f2f6fc;
+    text-align: center;
+    font-size: 14px;
+    color: #303133;
+}
+.table-detail {
+    height: 60px;
+    line-height: 40px;
+    border: 1px solid #dcdfe6;
+    padding: 10px;
+    font-size: 14px;
+    color: #606266;
+    text-align: center;
+    overflow: hidden;
+}
+.dialog-footer{
+    display: flex;
+    justify-content: end;
 }
 </style>

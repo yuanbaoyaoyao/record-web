@@ -14,6 +14,20 @@ export const constantRoutes = [
         component: () => import("../views/Login.vue")
     },
     {
+        path: '/register',
+        meta: {
+            title: "注册",
+        },
+        component: () => import("../views/Register.vue")
+    },
+    {
+        path: '/forgetPassword',
+        meta: {
+            title: "忘记密码",
+        },
+        component: () => import("../views/ForgetPassword.vue")
+    },
+    {
         path: "",
         name: "Home",
         component: Layout,

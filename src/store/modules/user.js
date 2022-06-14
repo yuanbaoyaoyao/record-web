@@ -52,10 +52,8 @@ const user = {
         // 获取用户信息
         GetUserInfo({ commit, state }) {
             return new Promise((resolve, reject) => {
-                getUserInfo(state.token).then(response => {
-                    console.log("调用getUserInfo")
+                getUserInfo(state).then(response => {
                     const data = response.data
-                    console.log("data:",data)
                     // if (data.perms && data.perms.length > 0) { // 验证返回的perms是否是一个非空数组
                     //     commit('SET_PERMS', data.perms)
                     // } else {

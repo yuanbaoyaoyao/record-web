@@ -14,7 +14,7 @@ NProgress.configure({ showSpinner: false })// NProgress Configuration
 //   return perms.some(perm => permissions.indexOf(perm) >= 0)
 // }
 
-const whiteList = ['/login', '/auth-redirect']// no redirect whitelist
+const whiteList = ['/login', '/auth-redirect','/register','/forgetPassword']// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
@@ -25,10 +25,7 @@ router.beforeEach((to, from, next) => {
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     }
      else {
-       console.log("判断是否已拉取完user_info信息")
-       console.log("store.getters.userId",store.getters.userId)
       if (store.getters.userId === '') { // 判断当前用户是否已拉取完user_info信息
-       console.log("判断是否已拉取完user_info信息2")
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
           // const perms = res.data.perms // note: perms must be a array! such as: ['GET /aaa','POST /bbb']
           // store.dispatch('GenerateRoutes', { perms }).then(() => { // 根据perms权限生成可访问的路由表

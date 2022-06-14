@@ -11,6 +11,9 @@ export function listProductSkusSearchAPI(params){
 export function listProductSkusLimitAPI(params){
     return http.get(`${resquest}`+`listLimit`,params)
 }
+export function listProductSkusLimitByNumberAPI(params){
+    return http.get(`${resquest}`+`listLimitByNumber`,params)
+}
 export function updateProductSkusAPI(params){
     return http.put(`${resquest}`+`update`,params)
 }
