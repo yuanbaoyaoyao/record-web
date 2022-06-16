@@ -60,6 +60,11 @@ export default defineConfig(({
           changeOrgin: true,
           rewrite: (path) => path.replace(/^\/clientIp/, '')
         },
+        "/searchIp": {
+          target: "http://localhost:8084",
+          changeOrgin: true,
+          rewrite: (path) => path.replace(/^\/searchIp/, '')
+        },
       }
     }
   })

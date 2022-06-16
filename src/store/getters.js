@@ -19,6 +19,7 @@ const getters = {
   productSkusNumber: state => state.productDetail.productSkusNumber,
   productSkusStock: state => state.productDetail.productSkusStock,
   productSkusAvatar: state => state.productDetail.productSkusAvatar,
-
+  productSkusSearchList: state => state.productDetail.productSkusSearchList,
+  isSearch: state => state.productDetail.isSearch
 }
 export default getters

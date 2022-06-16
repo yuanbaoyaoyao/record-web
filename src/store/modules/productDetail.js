@@ -3,14 +3,16 @@ import storage from "../../utils/storage"
 const productDetail = {
     state: {
         productTitle: '',
-        productId:'',
+        productId: '',
         productSKusIsLike: '',
         productSkusTitle: '',
         productSkusId: '',
         productSkusAvatar: '',
         productSkusInfo: '',
         productSkusNumber: '',
-        productSkusStock: ''
+        productSkusStock: '',
+        productSkusSearchList: [],
+        isSearch: false
     },
     mutations: {
         SET_PRODUCT_TITLE: (state, productTitle) => {
@@ -49,6 +51,12 @@ const productDetail = {
             state.productSkusStock = productSkusStock
             storage.set("PRODUCT_SKUS_STOCK", productSkusStock)
         },
+        SET_PRODUCT_SKUS_SEARCH_LIST: (state, productSkusSearchList) => {
+            state.productSkusSearchList = productSkusSearchList
+        },
+        SET_IS_SEARCH: (state, isSearch) => {
+            state.isSearch = isSearch
+        }
     }
 }
 

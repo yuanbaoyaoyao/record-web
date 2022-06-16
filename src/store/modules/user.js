@@ -15,16 +15,19 @@ const user = {
     mutations: {
         SET_USERID: (state, userId) => {
             state.userId = userId
-            storage.set("USER_ID",userId)
+            storage.set("USER_ID", userId)
         },
         SET_TOKEN: (state, token) => {
             state.token = token
+            storage.set("USER_TOKEN", token)
         },
         SET_NAME: (state, name) => {
             state.name = name
+            storage.set("USER_NAME", name)
         },
         SET_AVATAR: (state, avatar) => {
             state.avatar = avatar
+            storage.set("USER_AVATAR", avatar)
         },
     },
     actions: {
@@ -34,13 +37,13 @@ const user = {
             const username = userInfo.username.trim()
             return new Promise((resolve, reject) => {
                 loginByUsername(username, userInfo.password, userInfo.code).then(response => {
-                    console.log(response)
                     const token = response.data.token
                     const userId = response.data.userInfo.userId
+                    const userAvatar = response.data.userInfo.avatar
                     commit('SET_TOKEN', token)
                     commit('SET_USERID', userId)
                     commit('SET_NAME', username)
-                    console.log("username", username)
+                    commit('SET_AVATAR', userAvatar)
                     setToken(token)
                     resolve()
                 }).catch(error => {
@@ -52,19 +55,13 @@ const user = {
         // 获取用户信息
         GetUserInfo({ commit, state }) {
             return new Promise((resolve, reject) => {
-                getUserInfo(state).then(response => {
-                    const data = response.data
-                    // if (data.perms && data.perms.length > 0) { // 验证返回的perms是否是一个非空数组
-                    //     commit('SET_PERMS', data.perms)
-                    // } else {
-                    //     reject('getInfo: perms must be a non-null array !')
-                    // }
-                    // commit('SET_ROLES', data.roles)
-                    commit('SET_NAME', data.name)
-                    commit('SET_USERID', data.id)
-                    commit('SET_AVATAR', data.avatar)
-                    resolve(response)
+                getUserInfo(state).then(res => {
+                    commit('SET_NAME', res.data.name)
+                    commit('SET_USERID', res.data.id)
+                    commit('SET_AVATAR', res.data.avatar)
+                    resolve(res)
                 }).catch(error => {
+                    console.log("error", error)
                     reject(error)
                 })
             })
@@ -76,15 +73,9 @@ const user = {
             return new Promise((resolve, reject) => {
                 logout(state.token).then(() => {
                     commit('SET_TOKEN', '')
-                    // commit('SET_ROLES', [])
-                    // commit('SET_PERMS', [])
                     removeToken()
+                    storage.clear
                     resetRouter()
-
-                    // reset visited views and cached views
-                    // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-                    // dispatch('tagsView/delAllViews', null, { root: true })
-
                     resolve()
                 }).catch(error => {
                     reject(error)
@@ -96,33 +87,11 @@ const user = {
         FedLogOut({ commit }) {
             return new Promise(resolve => {
                 commit('SET_TOKEN', '')
-                // commit('SET_ROLES', [])
                 removeToken()
                 resolve()
             })
         },
 
-        // 动态修改权限
-        ChangeRoles({ commit, dispatch }, role) {
-            return new Promise(async resolve => {
-                commit('SET_TOKEN', role)
-                setToken(role)
-
-                const { roles } = await dispatch('GetUserInfo')
-
-                resetRouter()
-
-                const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-
-                // dynamically add accessible routes
-                router.addRoutes(accessRoutes)
-
-                // reset visited views and cached views
-                dispatch('tagsView/delAllViews', null, { root: true })
-
-                resolve()
-            })
-        }
     }
 }
 

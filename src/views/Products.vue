@@ -33,7 +33,9 @@
                 v-for="(item, index) in defaultProductRecommendData.slice(0, 5)"
                 :key="index"
               >
-                {{ item }}
+                <el-button @click="handleRecommendProductSearch(item)">
+                  {{ item }}
+                </el-button>
               </li>
             </ul>
           </div>
@@ -52,7 +54,13 @@
             @select="handleSelect"
             size="small"
           />
-          <el-button :icon="Search" type="primary" size="small" @click="handleProductSkusSearch">搜索</el-button>
+          <el-button
+            :icon="Search"
+            type="primary"
+            size="small"
+            @click="handleProductSkusSearch"
+            >搜索</el-button
+          >
           <div class="productSkus-recommendation">
             <span>推荐</span>
             <ul class="productSkus-filter-content">
@@ -63,7 +71,11 @@
                 )"
                 :key="index"
               >
-                {{ item.title }}
+                <el-button
+                  @click="handleRecommendProductSkusSearch(item.title)"
+                >
+                  {{ item.title }}
+                </el-button>
               </li>
             </ul>
           </div>
@@ -97,9 +109,9 @@
 
         <div class="pagination">
           <el-pagination
-            v-model:currentPage="defaultList.pageNum"
+            v-model:currentPage="defaultQuerySearchForm.pageNum"
             :page-sizes="[8, 16]"
-            :page-size="defaultList.pageSize"
+            :page-size="defaultQuerySearchForm.pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="pageTotal"
             @size-change="handleSizeChange"
@@ -118,7 +130,7 @@ import {
   Warning,
   Search,
 } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { onActivated, ref, watch } from "vue";
 import VDashboardHeader from "../components/DashboardHeader.vue";
 import { listProductAllAPI } from "../api/product";
 import {
@@ -128,14 +140,9 @@ import {
 import { ElNotification } from "element-plus";
 import store from "../store";
 import storage from "../utils/storage";
-const defaultList = ref({
-  pageNum: 1,
-  pageSize: 8,
-  keyword1: null,
-});
 const defaultQuerySearchForm = ref({
   pageNum: 1,
-  pageSize: 5,
+  pageSize: 8,
   productName: null,
   productSkusName: null,
 });
@@ -202,12 +209,12 @@ const createProductSkusFilter = (queryString) => {
 };
 
 const handleSizeChange = (val) => {
-  defaultList.value.pageNum = 1;
-  defaultList.value.pageSize = val;
+  defaultQuerySearchForm.value.pageNum = 1;
+  defaultQuerySearchForm.value.pageSize = val;
   getProductSkusInfo();
 };
 const handleCurrentChange = (val) => {
-  defaultList.value.pageNum = val;
+  defaultQuerySearchForm.value.pageNum = val;
   getProductSkusInfo();
 };
 const getProductInfo = () => {
@@ -217,10 +224,15 @@ const getProductInfo = () => {
     }
   });
 };
+
 const getProductSkusInfo = () => {
   listProductSkusSearchIPageAPI().then((res) => {
     defaultProductSkusRecommendData.value = res.data.records;
-    defaultProductSkusData.value = res.data.records;
+    if (store.getters.isSearch == false) {
+      defaultProductSkusData.value = res.data.records;
+    } else {
+      defaultProductSkusData.value = store.getters.productSkusSearchList;
+    }
     pageTotal.value = res.data.total;
   });
 };
@@ -249,8 +261,42 @@ const handleProductSkusSearch = () => {
     });
   });
 };
+
+const handleRecommendProductSearch = (item) => {
+  let querySearchForm = Object.assign({}, defaultQuerySearchForm.value);
+  querySearchForm.pageSize = pageTotal.value;
+  querySearchForm.productName = item;
+  listProductSkusSearchIPageAPI(querySearchForm).then((res) => {
+    defaultProductSkusData.value = res.data.records;
+    ElNotification({
+      type: "success",
+      title: "查询推荐耗材类型成功",
+    });
+  });
+};
+
+const handleRecommendProductSkusSearch = (item) => {
+  let querySearchForm = Object.assign({}, defaultQuerySearchForm.value);
+  querySearchForm.pageSize = pageTotal.value;
+  querySearchForm.productSkusName = item;
+  listProductSkusSearchIPageAPI(querySearchForm).then((res) => {
+    defaultProductSkusData.value = res.data.records;
+    ElNotification({
+      type: "success",
+      title: "查询推荐耗材型号成功",
+    });
+  });
+};
+
 getProductInfo();
 getProductSkusInfo();
+watch(
+  (store.getters.isSearch,
+  () => {
+    defaultProductSkusData.value = store.getters.productSkusSearchList;
+    pageTotal.value = store.getters.productSkusSearchList.length;
+  })
+);
 </script>
 <style scoped>
 .layout-header {
@@ -386,6 +432,16 @@ h4 {
   flex-direction: column;
   background-color: white;
   border-radius: 15px;
+}
+.products-filter-content :deep().el-button,
+.productSkus-filter-content :deep().el-button {
+  border: none;
+  min-height: 0;
+  padding: 0;
+}
+.products-filter-content :deep().el-button:hover,
+.productSkus-filter-content :deep().el-button:hover {
+  background: none;
 }
 .product-skus-none-data span {
   display: flex;

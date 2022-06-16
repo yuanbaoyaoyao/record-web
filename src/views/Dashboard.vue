@@ -9,7 +9,7 @@
             v-for="(item, index) in listProductData.slice(0, 9)"
             :key="index"
           >
-            <el-button type="text">
+            <el-button type="text" @click="handleSelectCommon(item)">
               <el-col>{{ item }}</el-col>
             </el-button>
           </el-row>
@@ -32,7 +32,7 @@
         <div class="dashboard-user-avatar">
           <el-avatar
             :size="80"
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+            :src="userAvatar"
           ></el-avatar>
           <h3>欢迎</h3>
         </div>
@@ -75,7 +75,11 @@
       <span class="dashboard-likes-title"> 猜你喜欢 </span>
       <div class="dashboard-likes-items">
         <el-row v-for="(item, index) in listLikesData" :key="index">
-          <el-button type="text">
+          <router-link
+            to="/productDetail"
+            :underline="false"
+            @click="handleProductDetail(item)"
+          >
             <el-col>
               <img
                 :src="item.avatar"
@@ -90,7 +94,7 @@
                 <span class="items-number">{{ item.stock }}</span>
               </div>
             </el-col>
-          </el-button>
+          </router-link>
         </el-row>
       </div>
     </div>
@@ -123,7 +127,7 @@ import {
   Search,
   ShoppingBag,
 } from "@element-plus/icons-vue";
-import { onMounted, onUpdated, ref, watch } from "vue";
+import { computed, onMounted, onUpdated, ref, watch } from "vue";
 import VDashboardHeader from "../components/DashboardHeader.vue";
 import { listProductAllAPI } from "../api/product";
 import {
@@ -139,6 +143,9 @@ import {
 import { listAnnouncementAPI } from "../api/announcement";
 
 import router from "../router";
+import store from "../store";
+import { ElNotification } from "element-plus";
+import storage from "../utils/storage";
 const listProductData = ref([{}]);
 const listProductSkusData = ref();
 const listLikesData = ref();
@@ -147,9 +154,27 @@ const listAnnouncementData = ref();
 const announcement = ref();
 const listAnnouncementIndex = ref(0);
 
+const userName = computed(()=>{
+  return storage.get("USER_NAME")
+})
+
+const userAvatar = computed(()=>{
+  return storage.get("USER_AVATAR")
+})
+
 const showAnimation = ref(true);
 
 const dialogFormVisible = ref(false);
+
+const handleProductDetail = (item) => {
+  store.commit("SET_PRODUCT_SKUS_ID", item.id);
+  store.commit("SET_PRODUCT_ID", item.productId);
+  store.commit("SET_PRODUCT_TITLE", item.productName);
+  store.commit("SET_PRODUCT_SKUS_TITLE", item.title);
+  store.commit("SET_PRODUCT_SKUS_INFO", item.description);
+  store.commit("SET_PRODUCT_SKUS_STOCK", item.stock);
+  store.commit("SET_PRODUCT_SKUS_AVATAR", item.avatar);
+};
 
 const getProductInfo = () => {
   listProductAllAPI().then((res) => {
@@ -191,7 +216,11 @@ const handleOpenAnnouncement = () => {
 };
 
 const linkToProductSkus = () => {
-  router.push("/products");
+  listProductSkusSearchIPageAPI().then((res) => {
+    store.commit("SET_PRODUCT_SKUS_SEARCH_LIST", res.data.records);
+    store.commit("SET_IS_SEARCH", true);
+    router.push("/products");
+  });
 };
 
 const enter = (el, done) => {
@@ -200,6 +229,20 @@ const enter = (el, done) => {
   if (listAnnouncementIndex.value >= listAnnouncementData.value.length) {
     listAnnouncementIndex.value = 0;
   }
+};
+const handleSelectCommon = (item) => {
+  let tempForm = {
+    productName: item,
+  };
+  listProductSkusSearchIPageAPI(tempForm).then((res) => {
+    store.commit("SET_PRODUCT_SKUS_SEARCH_LIST", res.data.records);
+    store.commit("SET_IS_SEARCH", true);
+    router.push("/products");
+    ElNotification({
+      type: "success",
+      title: "搜索耗材类型成功",
+    });
+  });
 };
 
 watch(
@@ -304,6 +347,7 @@ img {
 .dashboard-user-notice {
   display: grid;
   grid-template-columns: 20% 80%;
+  height: 55px;
 }
 .dashboard-user-button {
   display: grid;

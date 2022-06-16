@@ -72,18 +72,9 @@
               />
             </div>
           </div>
-          <!-- <div class="productDetail-summary">
-                    <div class="productDetail-summary-top">
-                        <div class="productDetail-summary-info">summary-info</div>
-                        <div class="productDetail-summary-price">summary-price</div>
-                    </div>
-                    <div class="productDetail-moneyCount">moneyCount</div>
-                    </div>-->
           <div class="productDetail-button">
             <el-button @click="handleAddToCart()">
-              <el-icon>
-                <shopping-cart /> </el-icon
-              >加入购物车
+              <el-icon> <shopping-cart /> </el-icon>加入购物车
             </el-button>
             <el-button @click="handleDisLike()" v-if="productSKusIsLike">
               <el-icon>
@@ -109,9 +100,7 @@
     :before-close="handleClose"
   >
     <span>
-      <el-icon>
-        <check /> </el-icon
-      >加入购物车成功
+      <el-icon> <check /> </el-icon>加入购物车成功
     </span>
     <template #footer>
       <span class="dialog-footer">
@@ -149,8 +138,6 @@ const productTitle = computed(() => {
   }
 });
 
-// const productSkusTitle = ref("")
-// const productSkusId = ref("")
 const defaultChangeInfo = ref({
   productSkusTitle: "",
   productSkusId: "",
@@ -183,14 +170,6 @@ const productSkusStock = computed(() => {
     return storage.get("PRODUCT_SKUS_STOCK");
   }
 });
-
-// const productSkusNumber = computed(() => {
-//     if (store.getters.productSkusNumber != '') {
-//         return store.getters.productSkusNumber
-//     } else {
-//         return storage.get("PRODUCT_SKUS_NUMBER")
-//     }
-// })
 
 const productSkusAvatar = computed(() => {
   if (store.getters.productSkusAvatar != "") {
@@ -240,10 +219,7 @@ const handleAddToCart = () => {
         dialogVisible.value = true;
       });
     }
-    console.log("resssssssssssssssssssss:", res);
   });
-  // createCartAPI
-  // dialogVisible.value = true
 };
 
 const handleLike = () => {
@@ -305,23 +281,11 @@ const getProductSkusInfo = () => {
         store.commit("SET_PRODUCT_SKUS_IS_LIKE", false);
       }
     });
-
-    // console.log("productSkusTemp.value1", productSkusTemp.value)
-    // for (let i = 0; i < productSkusOptions.value.length; i++) {
-    //     if (defaultChangeInfo.value.productSkusTitle == productSkusOptions.value[i].title) {
-    //         store.commit("SET_PRODUCT_SKUS_ID", productSkusOptions.value[i].id)
-    //         break;
-    //     }
-    // }
   });
 };
 
 const handleChangeProductSkus = (value) => {
-  console.log("valueeeeeeeeeeee", value);
   store.commit("SET_PRODUCT_SKUS_TITLE", value);
-  // store.commit("SET_PRODUCT_SKUS_AVATAR")
-  // store.commit("SET_PRODUCT_SKUS_INFO")
-  // store.commit("SET_PRODUCT_SKUS_STOCK")
   getProductSkusInfo();
 };
 getProductSkusInfo();

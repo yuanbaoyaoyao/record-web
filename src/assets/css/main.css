@@ -8,6 +8,9 @@ body,
     overflow: hidden;
     background-color: #f5f5f5;
 }
+#app{
+    overflow-y: scroll;
+}
 .content {
     position: absolute;
     width: auto;
