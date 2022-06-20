@@ -2,7 +2,7 @@ import http from "../utils/http";
 
 let resquest = "/clientIp/userOrderClient/"
 
-export function listUserOrderAPI(params){
+export function listUserOrderIPageAPI(params){
     return http.get(`${resquest}`+`list`,params)
 }
 export function createUserOrderAPI(params){

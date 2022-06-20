@@ -42,7 +42,7 @@
           <el-input
             v-model="form.password"
             type="password"
-            @keyup.enter="handleForget"
+            @keyup.enter="handleForget(formRef)"
           ></el-input>
         </el-form-item>
         <el-form-item>

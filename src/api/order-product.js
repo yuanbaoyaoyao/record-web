@@ -2,9 +2,9 @@ import http from "../utils/http";
 
 let resquest = "/clientIp/orderProductClient/"
 
-// export function listOrderProductAPI(params){
-//     return http.get(`${resquest}`+`list`,params)
-// }
+export function listOrderProductAPI(params){
+    return http.get(`${resquest}`+`list`,params)
+}
 export function createOrderProductAPI(params){
     return http.post(`${resquest}`+`create`,params)
 }

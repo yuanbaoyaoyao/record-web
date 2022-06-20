@@ -155,7 +155,6 @@
 </template>
 <script setup>
 import { reactive, ref } from "vue";
-import { UploadFile } from "element-plus/es/components/upload/src/upload.type";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
 import {
